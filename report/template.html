@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Бұлттық қауіпсіздік есебі (AWS Cloud Scanner)</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border-color: #334155;
+      --accent-blue: #3b82f6;
+      --severity-critical: #ef4444;
+      --severity-high: #f97316;
+      --severity-medium: #eab308;
+      --severity-low: #06b6d4;
+      --grade-a: #22c55e;
+      --grade-b: #3b82f6;
+      --grade-c: #eab308;
+      --grade-d: #f97316;
+      --grade-f: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Басқы деректер */
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-title h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-title p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+    }
+
+    .meta-badge {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .meta-badge strong {
+      color: var(--text-primary);
+    }
+
+    /* Жоғарғы статистикалық карточкалар */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-score {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-left: 4px solid var(--accent-blue);
+    }
+
+    .score-grade {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+    }
+
+    .grade-A { background: rgba(34, 197, 94, 0.15); color: var(--grade-a); border: 1px solid var(--grade-a); }
+    .grade-B { background: rgba(59, 130, 246, 0.15); color: var(--grade-b); border: 1px solid var(--grade-b); }
+    .grade-C { background: rgba(234, 179, 8, 0.15); color: var(--grade-c); border: 1px solid var(--grade-c); }
+    .grade-D { background: rgba(249, 115, 22, 0.15); color: var(--grade-d); border: 1px solid var(--grade-d); }
+    .grade-F { background: rgba(239, 68, 68, 0.15); color: var(--grade-f); border: 1px solid var(--grade-f); }
+
+    .card-title {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .sev-critical { color: var(--severity-critical); }
+    .sev-high { color: var(--severity-high); }
+    .sev-medium { color: var(--severity-medium); }
+    .sev-low { color: var(--severity-low); }
+
+    /* Сүзгі батырмалары */
+    .filter-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-right: 0.5rem;
+    }
+
+    .filter-btn {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      padding: 0.45rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+
+    .filter-btn.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+
+    /* Кесте бөлігі */
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: #1e293b;
+      padding: 0.9rem 1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 2px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Бейджтер */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .badge-CRITICAL {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid #ef4444;
+    }
+
+    .badge-HIGH {
+      background: rgba(249, 115, 22, 0.2);
+      color: #fb923c;
+      border: 1px solid #f97316;
+    }
+
+    .badge-MEDIUM {
+      background: rgba(234, 179, 8, 0.2);
+      color: #fde047;
+      border: 1px solid #eab308;
+    }
+
+    .badge-LOW {
+      background: rgba(6, 182, 212, 0.2);
+      color: #67e8f9;
+      border: 1px solid #06b6d4;
+    }
+
+    .rule-id {
+      font-family: monospace;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    .resource-id {
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      color: #cbd5e1;
+      display: inline-block;
+      margin-top: 0.35rem;
+      word-break: break-all;
+    }
+
+    .recommendation-box {
+      background: rgba(34, 197, 94, 0.08);
+      border-left: 3px solid #22c55e;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.25rem;
+      font-size: 0.825rem;
+      color: #86efac;
+      margin-top: 0.5rem;
+    }
+
+    .recommendation-title {
+      font-weight: 600;
+      color: #4ade80;
+      margin-bottom: 0.2rem;
+    }
+
+    .standard-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.25rem;
+      margin-top: 0.35rem;
+    }
+
+    .empty-state {
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-title">
+        <h1>Бұлттық қауіпсіздік аудит есебі</h1>
+        <p>AWS инфрақұрылымындағы конфигурациялық осалдықтарды талдау</p>
+      </div>
+      <div class="meta-badge">
+        Сканерлеу уақыты: <strong>{{ scan_time }}</strong> | Провайдер: <strong>{{ provider }}</strong> | Аймақ: <strong>{{ region }}</strong>
+      </div>
+    </header>
+
+    <!-- Басқару тақтасы (Dashboard) -->
+    <div class="dashboard-grid">
+      <div class="card card-score">
+        <div>
+          <div class="card-title">Қауіпсіздік деңгейі</div>
+          <div class="card-value">{{ score }} <span style="font-size: 1.1rem; color: var(--text-secondary);">/ 100</span></div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Жалпы баға</div>
+        </div>
+        <div class="score-grade grade-{{ grade }}">{{ grade }}</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Сыни қауіптер</div>
+        <div class="card-value sev-critical">{{ severity_counts.critical }}</div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Сыни (10 балл)</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Жоғары қауіптер</div>
+        <div class="card-value sev-high">{{ severity_counts.high }}</div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Жоғары (7 балл)</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Орташа қауіптер</div>
+        <div class="card-value sev-medium">{{ severity_counts.medium }}</div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Орташа (4 балл)</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Төмен қауіптер</div>
+        <div class="card-value sev-low">{{ severity_counts.low }}</div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Төмен (1 балл)</div>
+      </div>
+    </div>
+
+    <!-- Сүзгі батырмалары -->
+    <div class="filter-section">
+      <span class="filter-label">Қауіптілік бойынша сүзу:</span>
+      <button class="filter-btn active" onclick="filterFindings('ALL')">Барлығы ({{ findings|length }})</button>
+      <button class="filter-btn" onclick="filterFindings('CRITICAL')">Сыни ({{ severity_counts.critical }})</button>
+      <button class="filter-btn" onclick="filterFindings('HIGH')">Жоғары ({{ severity_counts.high }})</button>
+      <button class="filter-btn" onclick="filterFindings('MEDIUM')">Орташа ({{ severity_counts.medium }})</button>
+      <button class="filter-btn" onclick="filterFindings('LOW')">Төмен ({{ severity_counts.low }})</button>
+    </div>
+
+    <!-- Табылған осалдықтар кестесі -->
+    <div class="table-container">
+      <table id="findingsTable">
+        <thead>
+          <tr>
+            <th>Ереже</th>
+            <th>Деңгей</th>
+            <th>Атауы және ресурс</th>
+            <th>Сипаттамасы</th>
+            <th>Түзету ұсынысы</th>
+            <th>Стандарт</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if findings %}
+            {% for item in findings %}
+            <tr class="finding-row" data-severity="{{ item.severity.value }}">
+              <td><span class="rule-id">{{ item.rule_id }}</span></td>
+              <td>
+                <span class="badge badge-{{ item.severity.value }}">{{ item.severity.display_name }}</span>
+              </td>
+              <td>
+                <strong>{{ item.title }}</strong><br>
+                <span class="resource-id">{{ item.resource }}</span>
+              </td>
+              <td style="max-width: 340px;">{{ item.description }}</td>
+              <td style="max-width: 320px;">
+                <div class="recommendation-box">
+                  <div class="recommendation-title">Ұсыныс:</div>
+                  {{ item.recommendation }}
+                </div>
+              </td>
+              <td>
+                <span class="standard-tag">{{ item.standard }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" class="empty-state">
+                Таңдалған критерий бойынша ешқандай конфигурациялық осалдық табылған жоқ. Жүйе қауіпсіз!
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p>Дипломдық жоба: Бұлттық қауіпсіздік сканері (cloud-scanner) &bull; CIS AWS Foundations Benchmark негізінде</p>
+    </footer>
+  </div>
+
+  <script>
+    function filterFindings(severity) {
+      // Батырмалардың актив күйін жаңарту
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Жолдарды сүзу
+      const rows = document.querySelectorAll('.finding-row');
+      rows.forEach(row => {
+        const rowSeverity = row.getAttribute('data-severity');
+        if (severity === 'ALL' || rowSeverity === severity) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

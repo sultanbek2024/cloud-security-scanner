@@ -1,0 +1,191 @@
+{
+  "metadata": {
+    "scanner": "cloud-scanner",
+    "scan_time": "2026-11-04T17:27:09.175000",
+    "provider": "aws",
+    "region": "us-east-1"
+  },
+  "summary": {
+    "score": 22,
+    "grade": "F",
+    "total_findings": 17,
+    "severity_counts": {
+      "critical": 2,
+      "high": 7,
+      "medium": 4,
+      "low": 4
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "EC2-001",
+      "title": "SSH (22-порт) бүкіл интернетке ашық",
+      "resource": "sg-52723a48f45c33c46 (vulnerable-ssh-sg) [us-east-1]",
+      "severity": "HIGH",
+      "description": "'vulnerable-ssh-sg' (sg-52723a48f45c33c46) Security Group құрамында 22-портқа (SSH) кез келген интернет торабынан (0.0.0.0/0 немесе ::/0) кіруге рұқсат берілген. Бұл серверді автоматтандырылған брутфорс шабуылдарына ұшыратады.",
+      "recommendation": "SSH портына қолжетімділікті нақты сенімді IP мекенжайлармен немесе ішкі VPN арқылы шектеңіз. Сондай-ақ AWS Systems Manager Session Manager қызметін пайдалану ұсынылады.",
+      "standard": "CIS AWS Foundations Benchmark 5.2",
+      "severity_display": "Жоғары"
+    },
+    {
+      "rule_id": "EC2-001",
+      "title": "SSH (22-порт) бүкіл интернетке ашық",
+      "resource": "sg-bd2f0327394eb754d (vulnerable-allports-sg) [us-east-1]",
+      "severity": "HIGH",
+      "description": "'vulnerable-allports-sg' (sg-bd2f0327394eb754d) Security Group құрамында 22-портқа (SSH) кез келген интернет торабынан (0.0.0.0/0 немесе ::/0) кіруге рұқсат берілген. Бұл серверді автоматтандырылған брутфорс шабуылдарына ұшыратады.",
+      "recommendation": "SSH портына қолжетімділікті нақты сенімді IP мекенжайлармен немесе ішкі VPN арқылы шектеңіз. Сондай-ақ AWS Systems Manager Session Manager қызметін пайдалану ұсынылады.",
+      "standard": "CIS AWS Foundations Benchmark 5.2",
+      "severity_display": "Жоғары"
+    },
+    {
+      "rule_id": "EC2-002",
+      "title": "EBS томы шифрланбаған",
+      "resource": "vol-9a159fe5315d12a09 [us-east-1]",
+      "severity": "MEDIUM",
+      "description": "EBS томы 'vol-9a159fe5315d12a09' демалыс кезінде (at-rest) шифрланбаған. Бұл сақталған деректердің құпиялылығы мен қауіпсіздігіне тікелей қатер төндіреді.",
+      "recommendation": "EBS томы үшін AWS KMS кілттерін пайдаланып шифрлауды қосыңыз (EBS Encryption). Сондай-ақ аймақ деңгейінде әдепкі шифрлауды (Encryption by default) белсендіріңіз.",
+      "standard": "CIS AWS Foundations Benchmark 2.2.1",
+      "severity_display": "Орташа"
+    },
+    {
+      "rule_id": "EC2-003",
+      "title": "RDP (3389-порт) бүкіл интернетке ашық",
+      "resource": "sg-dcccacd05b25db6d2 (vulnerable-rdp-sg) [us-east-1]",
+      "severity": "HIGH",
+      "description": "'vulnerable-rdp-sg' (sg-dcccacd05b25db6d2) Security Group құрамында 3389-портқа (Windows RDP) бүкіл интернеттен (0.0.0.0/0 немесе ::/0) қосылуға рұқсат берілген. Бұл жүйені қашықтан басқару осалдықтарына және BlueKeep сияқты эксплойттерге ұшыратады.",
+      "recommendation": "3389 (RDP) портына қолжетімділікті нақты сенімді корпоративтік IP мекенжайлармен шектеңіз немесе AWS Systems Manager Fleet Manager пайдаланыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 5.3",
+      "severity_display": "Жоғары"
+    },
+    {
+      "rule_id": "EC2-003",
+      "title": "RDP (3389-порт) бүкіл интернетке ашық",
+      "resource": "sg-bd2f0327394eb754d (vulnerable-allports-sg) [us-east-1]",
+      "severity": "HIGH",
+      "description": "'vulnerable-allports-sg' (sg-bd2f0327394eb754d) Security Group құрамында 3389-портқа (Windows RDP) бүкіл интернеттен (0.0.0.0/0 немесе ::/0) қосылуға рұқсат берілген. Бұл жүйені қашықтан басқару осалдықтарына және BlueKeep сияқты эксплойттерге ұшыратады.",
+      "recommendation": "3389 (RDP) портына қолжетімділікті нақты сенімді корпоративтік IP мекенжайлармен шектеңіз немесе AWS Systems Manager Fleet Manager пайдаланыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 5.3",
+      "severity_display": "Жоғары"
+    },
+    {
+      "rule_id": "EC2-004",
+      "title": "Security Group барлық трафикті интернетке ашық қалдырған",
+      "resource": "sg-bd2f0327394eb754d (vulnerable-allports-sg) [us-east-1]",
+      "severity": "HIGH",
+      "description": "'vulnerable-allports-sg' (sg-bd2f0327394eb754d) Security Group барлық желілік порттар мен хаттамаларға (0.0.0.0/0 немесе ::/0) шектеусіз кіруге рұқсат берген. Бұл желілік қауіпсіздік деңгейін күрт төмендетеді.",
+      "recommendation": "Барлық трафикке рұқсат беретін (0.0.0.0/0 All Traffic) ережені дереу өшіріп, тек нақты қажетті порттар мен IP мекенжайларды ғана рұқсат етіңіз.",
+      "standard": "CIS AWS Foundations Benchmark 5.1",
+      "severity_display": "Жоғары"
+    },
+    {
+      "rule_id": "IAM-002",
+      "title": "Root есептік жазбасында MFA қосылмаған",
+      "resource": "AWS:Account:Root",
+      "severity": "CRITICAL",
+      "description": "AWS есептік жазбасының түбірлік пайдаланушысында (root account) көпфакторлы аутентификация (MFA) өшірулі тұр. Root аккаунты бұлттық жүйенің барлық ресурстарына шексіз құқыққа ие, сондықтан оны MFA-сыз пайдалану аса жоғары қауіп төндіреді.",
+      "recommendation": "Root пайдаланушысы үшін дереу аппараттық (FIDO2/U2F) немесе виртуалды MFA құрылғысын қосыңыз және күнделікті жұмыс үшін тек жеке IAM рөлдерін пайдаланыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 1.5",
+      "severity_display": "Сыни"
+    },
+    {
+      "rule_id": "IAM-004",
+      "title": "IAM саясатында толық әкімшілік рұқсаттар (Action '*' және Resource '*') берілген",
+      "resource": "arn:aws:iam::123456789012:policy/vulnerable-admin-wildcard-policy",
+      "severity": "CRITICAL",
+      "description": "'vulnerable-admin-wildcard-policy' басқарылатын саясатында (Customer Managed Policy) барлық әрекеттерге және барлық ресурстарға (Effect: Allow, Action: *, Resource: *) шектеусіз рұқсат берілген. Бұл ең аз артықшылық принципін (Least Privilege) бұзады.",
+      "recommendation": "Толық әкімшілік саясатты жойып, әрбір рөл мен пайдаланушыға тек қызметтік міндетіне қажетті нақты AWS әрекеттері мен ресурстарына ғана рұқсат беріңіз.",
+      "standard": "CIS AWS Foundations Benchmark 1.16",
+      "severity_display": "Сыни"
+    },
+    {
+      "rule_id": "IAM-005",
+      "title": "IAM құпиясөз саясаты мүлдем орнатылмаған",
+      "resource": "AWS:IAM:PasswordPolicy",
+      "severity": "LOW",
+      "description": "Бұл AWS есептік жазбасында жеке құпиясөз саясаты (Password Policy) анықталмаған. Пайдаланушылар әдепкі әлсіз баптаулармен жұмыс істеуде.",
+      "recommendation": "CIS AWS стандартына сәйкес қатаң ережелері бар (ұзындығы 14+, сандар, таңбалар) жаңа құпиясөз саясатын орнатыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 1.8",
+      "severity_display": "Төмен"
+    },
+    {
+      "rule_id": "S3-001",
+      "title": "S3 бакетінде жария қолжетімділікті бұғаттау толық қосылмаған",
+      "resource": "arn:aws:s3:::vulnerable-public-bucket",
+      "severity": "HIGH",
+      "description": "'vulnerable-public-bucket' S3 бакетінде Amazon S3 Block Public Access параметрлері толық қосылмаған (Public Access Block конфигурациясы мүлдем орнатылмаған). Бұл бакеттегі файлдардың кездейсоқ ашық интернетке жариялану қаупін тудырады.",
+      "recommendation": "S3 бакеті үшін 'Block all public access' баптауын толықтай қосыңыз (BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets = True).",
+      "standard": "CIS AWS Foundations Benchmark 2.1.5",
+      "severity_display": "Жоғары"
+    },
+    {
+      "rule_id": "S3-001",
+      "title": "S3 бакетінде жария қолжетімділікті бұғаттау толық қосылмаған",
+      "resource": "arn:aws:s3:::cloudtrail-logs-bucket",
+      "severity": "HIGH",
+      "description": "'cloudtrail-logs-bucket' S3 бакетінде Amazon S3 Block Public Access параметрлері толық қосылмаған (Public Access Block конфигурациясы мүлдем орнатылмаған). Бұл бакеттегі файлдардың кездейсоқ ашық интернетке жариялану қаупін тудырады.",
+      "recommendation": "S3 бакеті үшін 'Block all public access' баптауын толықтай қосыңыз (BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets = True).",
+      "standard": "CIS AWS Foundations Benchmark 2.1.5",
+      "severity_display": "Жоғары"
+    },
+    {
+      "rule_id": "S3-002",
+      "title": "S3 бакетінде әдепкі шифрлау (Default Encryption) қосылмаған",
+      "resource": "arn:aws:s3:::vulnerable-public-bucket",
+      "severity": "MEDIUM",
+      "description": "'vulnerable-public-bucket' S3 бакетінде серверлік әдепкі шифрлау бапталмаған. Бұл сақталатын объектілердің құпиялылығы мен қауіпсіздік талаптарына қайшы келеді.",
+      "recommendation": "S3 бакеті үшін AWS KMS (SSE-KMS) немесе Amazon S3 (SSE-S3) кілттерін пайдаланып әдепкі шифрлауды қосыңыз (Default Encryption).",
+      "standard": "CIS AWS Foundations Benchmark 2.1.1",
+      "severity_display": "Орташа"
+    },
+    {
+      "rule_id": "S3-002",
+      "title": "S3 бакетінде әдепкі шифрлау (Default Encryption) қосылмаған",
+      "resource": "arn:aws:s3:::safe-protected-bucket",
+      "severity": "MEDIUM",
+      "description": "'safe-protected-bucket' S3 бакетінде серверлік әдепкі шифрлау бапталмаған. Бұл сақталатын объектілердің құпиялылығы мен қауіпсіздік талаптарына қайшы келеді.",
+      "recommendation": "S3 бакеті үшін AWS KMS (SSE-KMS) немесе Amazon S3 (SSE-S3) кілттерін пайдаланып әдепкі шифрлауды қосыңыз (Default Encryption).",
+      "standard": "CIS AWS Foundations Benchmark 2.1.1",
+      "severity_display": "Орташа"
+    },
+    {
+      "rule_id": "S3-002",
+      "title": "S3 бакетінде әдепкі шифрлау (Default Encryption) қосылмаған",
+      "resource": "arn:aws:s3:::cloudtrail-logs-bucket",
+      "severity": "MEDIUM",
+      "description": "'cloudtrail-logs-bucket' S3 бакетінде серверлік әдепкі шифрлау бапталмаған. Бұл сақталатын объектілердің құпиялылығы мен қауіпсіздік талаптарына қайшы келеді.",
+      "recommendation": "S3 бакеті үшін AWS KMS (SSE-KMS) немесе Amazon S3 (SSE-S3) кілттерін пайдаланып әдепкі шифрлауды қосыңыз (Default Encryption).",
+      "standard": "CIS AWS Foundations Benchmark 2.1.1",
+      "severity_display": "Орташа"
+    },
+    {
+      "rule_id": "S3-003",
+      "title": "S3 бакетінде нұсқалылық (Versioning) қосылмаған",
+      "resource": "arn:aws:s3:::vulnerable-public-bucket",
+      "severity": "LOW",
+      "description": "'vulnerable-public-bucket' S3 бакетінде нұсқалылық (Versioning) белсенді емес (ағымдағы күйі: 'Disabled'). Нұсқалылықсыз файлдарды кездейсоқ өшіру немесе зиянды бағдарламалар арқылы қайта жазу кезінде деректерді қалпына келтіру мүмкін болмайды.",
+      "recommendation": "Деректердің тұтастығын сақтау және кездейсоқ жойылудан қорғау үшін S3 бакетінде Versioning мүмкіндігін қосыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 2.1.3",
+      "severity_display": "Төмен"
+    },
+    {
+      "rule_id": "S3-003",
+      "title": "S3 бакетінде нұсқалылық (Versioning) қосылмаған",
+      "resource": "arn:aws:s3:::safe-protected-bucket",
+      "severity": "LOW",
+      "description": "'safe-protected-bucket' S3 бакетінде нұсқалылық (Versioning) белсенді емес (ағымдағы күйі: 'Disabled'). Нұсқалылықсыз файлдарды кездейсоқ өшіру немесе зиянды бағдарламалар арқылы қайта жазу кезінде деректерді қалпына келтіру мүмкін болмайды.",
+      "recommendation": "Деректердің тұтастығын сақтау және кездейсоқ жойылудан қорғау үшін S3 бакетінде Versioning мүмкіндігін қосыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 2.1.3",
+      "severity_display": "Төмен"
+    },
+    {
+      "rule_id": "S3-003",
+      "title": "S3 бакетінде нұсқалылық (Versioning) қосылмаған",
+      "resource": "arn:aws:s3:::cloudtrail-logs-bucket",
+      "severity": "LOW",
+      "description": "'cloudtrail-logs-bucket' S3 бакетінде нұсқалылық (Versioning) белсенді емес (ағымдағы күйі: 'Disabled'). Нұсқалылықсыз файлдарды кездейсоқ өшіру немесе зиянды бағдарламалар арқылы қайта жазу кезінде деректерді қалпына келтіру мүмкін болмайды.",
+      "recommendation": "Деректердің тұтастығын сақтау және кездейсоқ жойылудан қорғау үшін S3 бакетінде Versioning мүмкіндігін қосыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 2.1.3",
+      "severity_display": "Төмен"
+    }
+  ]
+}

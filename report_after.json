@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "scanner": "cloud-scanner",
+    "scan_time": "2026-11-04T17:30:23.689261",
+    "provider": "aws",
+    "region": "us-east-1"
+  },
+  "summary": {
+    "score": 88,
+    "grade": "B",
+    "total_findings": 1,
+    "severity_counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "findings": [
+    {
+      "rule_id": "IAM-002",
+      "title": "Root есептік жазбасында MFA қосылмаған",
+      "resource": "AWS:Account:Root",
+      "severity": "CRITICAL",
+      "description": "AWS есептік жазбасының түбірлік пайдаланушысында (root account) көпфакторлы аутентификация (MFA) өшірулі тұр. Root аккаунты бұлттық жүйенің барлық ресурстарына шексіз құқыққа ие, сондықтан оны MFA-сыз пайдалану аса жоғары қауіп төндіреді.",
+      "recommendation": "Root пайдаланушысы үшін дереу аппараттық (FIDO2/U2F) немесе виртуалды MFA құрылғысын қосыңыз және күнделікті жұмыс үшін тек жеке IAM рөлдерін пайдаланыңыз.",
+      "standard": "CIS AWS Foundations Benchmark 1.5",
+      "severity_display": "Сыни"
+    }
+  ]
+}
