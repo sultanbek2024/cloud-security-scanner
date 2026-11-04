@@ -6,29 +6,29 @@ from core.models import Finding, Severity
 
 # 15 негізгі ереженің әдепкі қауіптілік салмақтары
 DEFAULT_RULE_SEVERITIES: Dict[str, Severity] = {
-    # CRITICAL (10 балл) - 3 ереже = 30
+    # CRITICAL (10 балл) - 3 ереже = 30 (макс. айыппұл: 3 x 20 = 60)
     "IAM-002": Severity.CRITICAL,
     "IAM-004": Severity.CRITICAL,
     "RDS-001": Severity.CRITICAL,
-    # HIGH (7 балл) - 5 ереже = 35
+    # HIGH (7 балл) - 5 ереже = 35 (макс. айыппұл: 5 x 14 = 70)
     "EC2-001": Severity.HIGH,
     "EC2-003": Severity.HIGH,
     "EC2-004": Severity.HIGH,
     "S3-001": Severity.HIGH,
     "CT-001": Severity.HIGH,
-    # MEDIUM (4 балл) - 4 ереже = 16
+    # MEDIUM (4 балл) - 4 ереже = 16 (макс. айыппұл: 4 x 8 = 32)
     "EC2-002": Severity.MEDIUM,
     "S3-002": Severity.MEDIUM,
     "IAM-001": Severity.MEDIUM,
     "IAM-003": Severity.MEDIUM,
-    # LOW (1 балл) - 3 ереже = 3
+    # LOW (1 балл) - 3 ереже = 3 (макс. айыппұл: 3 x 2 = 6)
     "S3-003": Severity.LOW,
     "IAM-005": Severity.LOW,
     "CT-002": Severity.LOW,
 }
 
-# Барлық 15 ереженің жалпы эталондық ёмкость сыйымдылығы: 30 + 35 + 16 + 3 = 84
-TOTAL_BENCHMARK_CAPACITY: int = sum(sev.weight for sev in DEFAULT_RULE_SEVERITIES.values())
+# Барлық 15 ереженің шекті сыйымдылығы (Capacity = sum(2 * W_r)): 60 + 70 + 32 + 6 = 168
+TOTAL_BENCHMARK_CAPACITY: int = sum(sev.weight * 2 for sev in DEFAULT_RULE_SEVERITIES.values())
 
 
 def group_findings_by_severity(findings: List[Finding]) -> Dict[Severity, List[Finding]]:
@@ -57,18 +57,21 @@ def calculate_score(
     """
     Инфрақұрылымның қауіпсіздік деңгейін (0-100 балл) және әріптік рейтингін (A/B/C/D/F) есептейді.
     
-    Жаңа нақты формула (Салмақталған сыйымдылық және шекті кему моделі):
-    1. Жүйенің толық сыйымдылығы (Capacity) = барлық тіркелген тексерулердің салмақтарының қосындысы.
-       (Әдепкі 15 тексеру үшін: 3x10 + 5x7 + 4x4 + 3x1 = 84 балл).
+    Математикалық модель (Шекті сыйымдылық және кему заңы):
+    1. Жүйенің толық сыйымдылығы (Capacity) = барлық тіркелген тексерулердің екі еселенген
+       салмақтарының қосындысы (Capacity = sum(2 * W_r)).
+       (Әдепкі 15 тексеру үшін: 3x20 + 5x14 + 4x8 + 3x2 = 168 балл).
     2. Бір ереже бойынша қайталанатын ресурстар үшін шекті кему заңы (diminishing penalty):
        P_r = W_r * (1 + 0.25 * min(n_r - 1, 4)).
-       Бірінші ресурс ереженің 100% салмағын алады, қосымша әрбір ресурс +25% қосады (макс. +100%).
+       Бірінші ресурс ереженің 100% салмағын алады, қосымша әрбір ресурс +25% қосады (макс. +100%, яғни 2 * W_r).
     3. Айыппұл сыйымдылыққа қатысты пайызбен шегеріледі:
        Deduction = (sum(P_r) / Capacity) * 100.
        Score = max(0, min(100, 100 - round(Deduction))).
-       
+    4. Егер ортада кем дегенде бір CRITICAL осалдық қалса, рейтинг B деңгейінен жоғары бола алмайды
+       (балл өзгермейді, бірақ рейтинг 'A' болса, 'B'-ға дейін төмендетіледі).
+
     Бағалау шкаласы:
-      - 90 - 100: A (Үздік / Қауіпсіз)
+      - 90 - 100: A (Үздік / Қауіпсіз, егер CRITICAL болмаса)
       - 80 - 89:  B (Жақсы)
       - 70 - 79:  C (Қанағаттанарлық)
       - 60 - 69:  D (Төмен деңгей)
@@ -77,11 +80,10 @@ def calculate_score(
     if not findings:
         return 100, "A"
 
-    # Сыйымдылықты (Capacity) есептеу
+    # Сыйымдылықты (Capacity) есептеу: sum(2 * W_r)
     if rule_severities:
-        capacity = float(sum(s.weight for s in rule_severities.values()))
+        capacity = float(sum(s.weight * 2 for s in rule_severities.values()))
     elif total_checks != 15 and total_checks > 0:
-        # Егер арнайы сан берілсе, пропорционалды сыйымдылықты анықтау
         capacity = float(total_checks * (TOTAL_BENCHMARK_CAPACITY / 15.0))
     else:
         capacity = float(TOTAL_BENCHMARK_CAPACITY)
@@ -119,5 +121,10 @@ def calculate_score(
         grade = "D"
     else:
         grade = "F"
+
+    # 4. CRITICAL қауіп болса, рейтинг B деңгейінен жоғары бола алмайды
+    has_critical = any(f.severity == Severity.CRITICAL for f in findings)
+    if has_critical and grade == "A":
+        grade = "B"
 
     return final_score, grade

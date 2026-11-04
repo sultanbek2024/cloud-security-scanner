@@ -318,7 +318,7 @@
         <p>AWS инфрақұрылымындағы конфигурациялық осалдықтарды талдау</p>
       </div>
       <div class="meta-badge">
-        Сканерлеу уақыты: <strong>2026-11-04 17:26:02</strong> | Провайдер: <strong>aws</strong> | Аймақ: <strong>us-east-1</strong>
+        Сканерлеу уақыты: <strong>2026-11-04 18:09:44</strong> | Провайдер: <strong>aws</strong> | Аймақ: <strong>us-east-1</strong>
       </div>
     </header>
 
@@ -327,7 +327,7 @@
       <div class="card card-score">
         <div>
           <div class="card-title">Қауіпсіздік деңгейі</div>
-          <div class="card-value">22 <span style="font-size: 1.1rem; color: var(--text-secondary);">/ 100</span></div>
+          <div class="card-value">49 <span style="font-size: 1.1rem; color: var(--text-secondary);">/ 100</span></div>
           <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Жалпы баға</div>
         </div>
         <div class="score-grade grade-F">F</div>
@@ -335,13 +335,13 @@
 
       <div class="card">
         <div class="card-title">Сыни қауіптер</div>
-        <div class="card-value sev-critical">2</div>
+        <div class="card-value sev-critical">3</div>
         <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Сыни (10 балл)</div>
       </div>
 
       <div class="card">
         <div class="card-title">Жоғары қауіптер</div>
-        <div class="card-value sev-high">7</div>
+        <div class="card-value sev-high">8</div>
         <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Жоғары (7 балл)</div>
       </div>
 
@@ -361,9 +361,9 @@
     <!-- Сүзгі батырмалары -->
     <div class="filter-section">
       <span class="filter-label">Қауіптілік бойынша сүзу:</span>
-      <button class="filter-btn active" onclick="filterFindings('ALL')">Барлығы (17)</button>
-      <button class="filter-btn" onclick="filterFindings('CRITICAL')">Сыни (2)</button>
-      <button class="filter-btn" onclick="filterFindings('HIGH')">Жоғары (7)</button>
+      <button class="filter-btn active" onclick="filterFindings('ALL')">Барлығы (19)</button>
+      <button class="filter-btn" onclick="filterFindings('CRITICAL')">Сыни (3)</button>
+      <button class="filter-btn" onclick="filterFindings('HIGH')">Жоғары (8)</button>
       <button class="filter-btn" onclick="filterFindings('MEDIUM')">Орташа (4)</button>
       <button class="filter-btn" onclick="filterFindings('LOW')">Төмен (4)</button>
     </div>
@@ -385,15 +385,57 @@
           
             
             <tr class="finding-row" data-severity="HIGH">
+              <td><span class="rule-id">CT-001</span></td>
+              <td>
+                <span class="badge badge-HIGH">Жоғары</span>
+              </td>
+              <td>
+                <strong>Белсенді CloudTrail трейлі табылмады немесе журналдау өшірілген</strong><br>
+                <span class="resource-id">AWS:CloudTrail</span>
+              </td>
+              <td style="max-width: 340px;">Бұл AWS есептік жазбасында журналдау жүргізетін белсенді CloudTrail трейлі анықталмады. CloudTrail өшірулі болғанда, жүйедегі барлық API шақырулары мен пайдаланушы әрекеттері тіркелмейді, бұл қауіпсіздік инциденттерін тергеуді және бақылауды мүмкін етпейді.</td>
+              <td style="max-width: 320px;">
+                <div class="recommendation-box">
+                  <div class="recommendation-title">Ұсыныс:</div>
+                  Барлық аймақтардағы оқиғаларды жазатын (multi-region trail) CloudTrail трейлін қосыңыз және журналдарды қорғалған, шифрланған S3 бакетіне бағыттаңыз.
+                </div>
+              </td>
+              <td>
+                <span class="standard-tag">CIS AWS Foundations Benchmark 3.1</span>
+              </td>
+            </tr>
+            
+            <tr class="finding-row" data-severity="LOW">
+              <td><span class="rule-id">CT-002</span></td>
+              <td>
+                <span class="badge badge-LOW">Төмен</span>
+              </td>
+              <td>
+                <strong>CloudTrail трейлінде лог-файлдардың тұтастығын тексеру (Log Validation) өшірілген</strong><br>
+                <span class="resource-id">arn:aws:cloudtrail:us-east-1:123456789012:trail/vulnerable-trail-no-validation</span>
+              </td>
+              <td style="max-width: 340px;">&#39;vulnerable-trail-no-validation&#39; CloudTrail трейлінде журнал файлдарының тұтастығын тексеру (Log File Validation) мүмкіндігі өшірілген. Бұл журналдардың қолдан өзгертілуі немесе өшірілуі орын алған жағдайда оны дер кезінде анықтауға кедергі келтіреді.</td>
+              <td style="max-width: 320px;">
+                <div class="recommendation-box">
+                  <div class="recommendation-title">Ұсыныс:</div>
+                  Трейл баптауларында &#39;Enable log file validation&#39; опциясын қосыңыз. Бұл журналдардың өзгертілмегенін дәлелдейтін криптографиялық хэштерді сақтауды қамтамасыз етеді.
+                </div>
+              </td>
+              <td>
+                <span class="standard-tag">CIS AWS Foundations Benchmark 3.2</span>
+              </td>
+            </tr>
+            
+            <tr class="finding-row" data-severity="HIGH">
               <td><span class="rule-id">EC2-001</span></td>
               <td>
                 <span class="badge badge-HIGH">Жоғары</span>
               </td>
               <td>
                 <strong>SSH (22-порт) бүкіл интернетке ашық</strong><br>
-                <span class="resource-id">sg-52723a48f45c33c46 (vulnerable-ssh-sg) [us-east-1]</span>
+                <span class="resource-id">sg-e2191ec69a085c248 (vulnerable-ssh-sg) [us-east-1]</span>
               </td>
-              <td style="max-width: 340px;">&#39;vulnerable-ssh-sg&#39; (sg-52723a48f45c33c46) Security Group құрамында 22-портқа (SSH) кез келген интернет торабынан (0.0.0.0/0 немесе ::/0) кіруге рұқсат берілген. Бұл серверді автоматтандырылған брутфорс шабуылдарына ұшыратады.</td>
+              <td style="max-width: 340px;">&#39;vulnerable-ssh-sg&#39; (sg-e2191ec69a085c248) Security Group құрамында 22-портқа (SSH) кез келген интернет торабынан (0.0.0.0/0 немесе ::/0) кіруге рұқсат берілген. Бұл серверді автоматтандырылған брутфорс шабуылдарына ұшыратады.</td>
               <td style="max-width: 320px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>
@@ -412,9 +454,9 @@
               </td>
               <td>
                 <strong>SSH (22-порт) бүкіл интернетке ашық</strong><br>
-                <span class="resource-id">sg-bd2f0327394eb754d (vulnerable-allports-sg) [us-east-1]</span>
+                <span class="resource-id">sg-229dd0dd11f08b094 (vulnerable-allports-sg) [us-east-1]</span>
               </td>
-              <td style="max-width: 340px;">&#39;vulnerable-allports-sg&#39; (sg-bd2f0327394eb754d) Security Group құрамында 22-портқа (SSH) кез келген интернет торабынан (0.0.0.0/0 немесе ::/0) кіруге рұқсат берілген. Бұл серверді автоматтандырылған брутфорс шабуылдарына ұшыратады.</td>
+              <td style="max-width: 340px;">&#39;vulnerable-allports-sg&#39; (sg-229dd0dd11f08b094) Security Group құрамында 22-портқа (SSH) кез келген интернет торабынан (0.0.0.0/0 немесе ::/0) кіруге рұқсат берілген. Бұл серверді автоматтандырылған брутфорс шабуылдарына ұшыратады.</td>
               <td style="max-width: 320px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>
@@ -433,9 +475,9 @@
               </td>
               <td>
                 <strong>EBS томы шифрланбаған</strong><br>
-                <span class="resource-id">vol-9a159fe5315d12a09 [us-east-1]</span>
+                <span class="resource-id">vol-8c61d8ae787e5a9db [us-east-1]</span>
               </td>
-              <td style="max-width: 340px;">EBS томы &#39;vol-9a159fe5315d12a09&#39; демалыс кезінде (at-rest) шифрланбаған. Бұл сақталған деректердің құпиялылығы мен қауіпсіздігіне тікелей қатер төндіреді.</td>
+              <td style="max-width: 340px;">EBS томы &#39;vol-8c61d8ae787e5a9db&#39; демалыс кезінде (at-rest) шифрланбаған. Бұл сақталған деректердің құпиялылығы мен қауіпсіздігіне тікелей қатер төндіреді.</td>
               <td style="max-width: 320px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>
@@ -454,9 +496,9 @@
               </td>
               <td>
                 <strong>RDP (3389-порт) бүкіл интернетке ашық</strong><br>
-                <span class="resource-id">sg-dcccacd05b25db6d2 (vulnerable-rdp-sg) [us-east-1]</span>
+                <span class="resource-id">sg-d5818afff1a3fadfa (vulnerable-rdp-sg) [us-east-1]</span>
               </td>
-              <td style="max-width: 340px;">&#39;vulnerable-rdp-sg&#39; (sg-dcccacd05b25db6d2) Security Group құрамында 3389-портқа (Windows RDP) бүкіл интернеттен (0.0.0.0/0 немесе ::/0) қосылуға рұқсат берілген. Бұл жүйені қашықтан басқару осалдықтарына және BlueKeep сияқты эксплойттерге ұшыратады.</td>
+              <td style="max-width: 340px;">&#39;vulnerable-rdp-sg&#39; (sg-d5818afff1a3fadfa) Security Group құрамында 3389-портқа (Windows RDP) бүкіл интернеттен (0.0.0.0/0 немесе ::/0) қосылуға рұқсат берілген. Бұл жүйені қашықтан басқару осалдықтарына және BlueKeep сияқты эксплойттерге ұшыратады.</td>
               <td style="max-width: 320px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>
@@ -475,9 +517,9 @@
               </td>
               <td>
                 <strong>RDP (3389-порт) бүкіл интернетке ашық</strong><br>
-                <span class="resource-id">sg-bd2f0327394eb754d (vulnerable-allports-sg) [us-east-1]</span>
+                <span class="resource-id">sg-229dd0dd11f08b094 (vulnerable-allports-sg) [us-east-1]</span>
               </td>
-              <td style="max-width: 340px;">&#39;vulnerable-allports-sg&#39; (sg-bd2f0327394eb754d) Security Group құрамында 3389-портқа (Windows RDP) бүкіл интернеттен (0.0.0.0/0 немесе ::/0) қосылуға рұқсат берілген. Бұл жүйені қашықтан басқару осалдықтарына және BlueKeep сияқты эксплойттерге ұшыратады.</td>
+              <td style="max-width: 340px;">&#39;vulnerable-allports-sg&#39; (sg-229dd0dd11f08b094) Security Group құрамында 3389-портқа (Windows RDP) бүкіл интернеттен (0.0.0.0/0 немесе ::/0) қосылуға рұқсат берілген. Бұл жүйені қашықтан басқару осалдықтарына және BlueKeep сияқты эксплойттерге ұшыратады.</td>
               <td style="max-width: 320px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>
@@ -496,9 +538,9 @@
               </td>
               <td>
                 <strong>Security Group барлық трафикті интернетке ашық қалдырған</strong><br>
-                <span class="resource-id">sg-bd2f0327394eb754d (vulnerable-allports-sg) [us-east-1]</span>
+                <span class="resource-id">sg-229dd0dd11f08b094 (vulnerable-allports-sg) [us-east-1]</span>
               </td>
-              <td style="max-width: 340px;">&#39;vulnerable-allports-sg&#39; (sg-bd2f0327394eb754d) Security Group барлық желілік порттар мен хаттамаларға (0.0.0.0/0 немесе ::/0) шектеусіз кіруге рұқсат берген. Бұл желілік қауіпсіздік деңгейін күрт төмендетеді.</td>
+              <td style="max-width: 340px;">&#39;vulnerable-allports-sg&#39; (sg-229dd0dd11f08b094) Security Group барлық желілік порттар мен хаттамаларға (0.0.0.0/0 немесе ::/0) шектеусіз кіруге рұқсат берген. Бұл желілік қауіпсіздік деңгейін күрт төмендетеді.</td>
               <td style="max-width: 320px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>
@@ -507,6 +549,27 @@
               </td>
               <td>
                 <span class="standard-tag">CIS AWS Foundations Benchmark 5.1</span>
+              </td>
+            </tr>
+            
+            <tr class="finding-row" data-severity="MEDIUM">
+              <td><span class="rule-id">IAM-001</span></td>
+              <td>
+                <span class="badge badge-MEDIUM">Орташа</span>
+              </td>
+              <td>
+                <strong>Консольге кіру рұқсаты бар пайдаланушыда MFA қосылмаған</strong><br>
+                <span class="resource-id">arn:aws:iam::123456789012:user/vulnerable-console-user</span>
+              </td>
+              <td style="max-width: 340px;">&#39;vulnerable-console-user&#39; IAM пайдаланушысында AWS басқару консоліне (AWS Management Console) кіруге арналған белсенді құпиясөз бар, бірақ көпфакторлы аутентификация (MFA) орнатылмаған. Бұл құпиясөз қолды болған жағдайда есептік жазбаның бұзылу қаупін айтарлықтай арттырады.</td>
+              <td style="max-width: 320px;">
+                <div class="recommendation-box">
+                  <div class="recommendation-title">Ұсыныс:</div>
+                  &#39;vulnerable-console-user&#39; пайдаланушысы үшін міндетті түрде виртуалды (Google Authenticator және т.б.) немесе аппараттық FIDO/U2F қауіпсіздік кілтін (MFA) байланыстырыңыз.
+                </div>
+              </td>
+              <td>
+                <span class="standard-tag">CIS AWS Foundations Benchmark 1.10</span>
               </td>
             </tr>
             
@@ -570,6 +633,27 @@
               </td>
               <td>
                 <span class="standard-tag">CIS AWS Foundations Benchmark 1.8</span>
+              </td>
+            </tr>
+            
+            <tr class="finding-row" data-severity="CRITICAL">
+              <td><span class="rule-id">RDS-001</span></td>
+              <td>
+                <span class="badge badge-CRITICAL">Сыни</span>
+              </td>
+              <td>
+                <strong>RDS деректер қоры интернетке жария қолжетімді (Publicly Accessible)</strong><br>
+                <span class="resource-id">arn:aws:rds:us-east-1:123456789012:db:vulnerable-public-db [us-east-1]</span>
+              </td>
+              <td style="max-width: 340px;">&#39;vulnerable-public-db&#39; (postgres) RDS деректер қоры данасында &#39;Publicly Accessible&#39; баптауы қосылған. Бұл деректер қорына интернеттен тікелей қол жеткізуге мүмкіндік береді және деректердің сыртқа таралып кетуі немесе шабуылдаушылардың басып алу қаупін тудырады.</td>
+              <td style="max-width: 320px;">
+                <div class="recommendation-box">
+                  <div class="recommendation-title">Ұсыныс:</div>
+                  Деректер қорының қасиеттерінен &#39;Publicly Accessible&#39; мәнін &#39;No&#39; етіп өзгертіңіз және оны тек жеке ішкі желіге (Private Subnet) орналастырып, тек рұқсат етілген қолданбалы серверлерден ғана қосылуға рұқсат беріңіз.
+                </div>
+              </td>
+              <td>
+                <span class="standard-tag">CIS AWS Foundations Benchmark 2.3.1</span>
               </td>
             </tr>
             
@@ -643,27 +727,6 @@
               </td>
               <td>
                 <strong>S3 бакетінде әдепкі шифрлау (Default Encryption) қосылмаған</strong><br>
-                <span class="resource-id">arn:aws:s3:::safe-protected-bucket</span>
-              </td>
-              <td style="max-width: 340px;">&#39;safe-protected-bucket&#39; S3 бакетінде серверлік әдепкі шифрлау бапталмаған. Бұл сақталатын объектілердің құпиялылығы мен қауіпсіздік талаптарына қайшы келеді.</td>
-              <td style="max-width: 320px;">
-                <div class="recommendation-box">
-                  <div class="recommendation-title">Ұсыныс:</div>
-                  S3 бакеті үшін AWS KMS (SSE-KMS) немесе Amazon S3 (SSE-S3) кілттерін пайдаланып әдепкі шифрлауды қосыңыз (Default Encryption).
-                </div>
-              </td>
-              <td>
-                <span class="standard-tag">CIS AWS Foundations Benchmark 2.1.1</span>
-              </td>
-            </tr>
-            
-            <tr class="finding-row" data-severity="MEDIUM">
-              <td><span class="rule-id">S3-002</span></td>
-              <td>
-                <span class="badge badge-MEDIUM">Орташа</span>
-              </td>
-              <td>
-                <strong>S3 бакетінде әдепкі шифрлау (Default Encryption) қосылмаған</strong><br>
                 <span class="resource-id">arn:aws:s3:::cloudtrail-logs-bucket</span>
               </td>
               <td style="max-width: 340px;">&#39;cloudtrail-logs-bucket&#39; S3 бакетінде серверлік әдепкі шифрлау бапталмаған. Бұл сақталатын объектілердің құпиялылығы мен қауіпсіздік талаптарына қайшы келеді.</td>
@@ -688,27 +751,6 @@
                 <span class="resource-id">arn:aws:s3:::vulnerable-public-bucket</span>
               </td>
               <td style="max-width: 340px;">&#39;vulnerable-public-bucket&#39; S3 бакетінде нұсқалылық (Versioning) белсенді емес (ағымдағы күйі: &#39;Disabled&#39;). Нұсқалылықсыз файлдарды кездейсоқ өшіру немесе зиянды бағдарламалар арқылы қайта жазу кезінде деректерді қалпына келтіру мүмкін болмайды.</td>
-              <td style="max-width: 320px;">
-                <div class="recommendation-box">
-                  <div class="recommendation-title">Ұсыныс:</div>
-                  Деректердің тұтастығын сақтау және кездейсоқ жойылудан қорғау үшін S3 бакетінде Versioning мүмкіндігін қосыңыз.
-                </div>
-              </td>
-              <td>
-                <span class="standard-tag">CIS AWS Foundations Benchmark 2.1.3</span>
-              </td>
-            </tr>
-            
-            <tr class="finding-row" data-severity="LOW">
-              <td><span class="rule-id">S3-003</span></td>
-              <td>
-                <span class="badge badge-LOW">Төмен</span>
-              </td>
-              <td>
-                <strong>S3 бакетінде нұсқалылық (Versioning) қосылмаған</strong><br>
-                <span class="resource-id">arn:aws:s3:::safe-protected-bucket</span>
-              </td>
-              <td style="max-width: 340px;">&#39;safe-protected-bucket&#39; S3 бакетінде нұсқалылық (Versioning) белсенді емес (ағымдағы күйі: &#39;Disabled&#39;). Нұсқалылықсыз файлдарды кездейсоқ өшіру немесе зиянды бағдарламалар арқылы қайта жазу кезінде деректерді қалпына келтіру мүмкін болмайды.</td>
               <td style="max-width: 320px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>

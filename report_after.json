@@ -1,12 +1,12 @@
 {
   "metadata": {
     "scanner": "cloud-scanner",
-    "scan_time": "2026-11-04T17:30:23.689261",
+    "scan_time": "2026-11-04T18:12:00.546011",
     "provider": "aws",
     "region": "us-east-1"
   },
   "summary": {
-    "score": 88,
+    "score": 94,
     "grade": "B",
     "total_findings": 1,
     "severity_counts": {

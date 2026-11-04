@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Осал ортаны автоматты түрде түзету және қауіпсіздендіру скрипті (Remediation Script).
-Барлық осал ресурстарды CIS AWS Benchmark талаптарына сәйкестендіреді.
+Барлық осал ресурстарды CIS AWS Benchmark талаптарына сәйкестендіреді немесе тазалайды (--cleanup).
 """
 import argparse
 import sys
@@ -31,9 +31,16 @@ TEST_SECRET_KEY = "test"
 # Ресурс атаулары
 SG_NAMES = ["vulnerable-ssh-sg", "vulnerable-rdp-sg", "vulnerable-allports-sg"]
 TAG_VOL_UNENCRYPTED = "vulnerable-unencrypted-volume"
+TAG_VOL_ENCRYPTED = "safe-encrypted-volume"
+BUCKET_VULN_NAME = "vulnerable-public-bucket"
+BUCKET_SAFE_NAME = "safe-protected-bucket"
+BUCKET_CT_LOGS = "cloudtrail-logs-bucket"
 IAM_USER_CONSOLE = "vulnerable-console-user"
+IAM_USER_API = "developer-api-user"
 POLICY_ADMIN_NAME = "vulnerable-admin-wildcard-policy"
+POLICY_SAFE_NAME = "safe-readonly-policy"
 RDS_PUBLIC_ID = "vulnerable-public-db"
+RDS_PRIVATE_ID = "safe-private-db"
 TRAIL_NAME = "vulnerable-trail-no-validation"
 
 
@@ -268,9 +275,112 @@ def remediate_cloudtrail(ct) -> None:
         print(f"  [!] CloudTrail түзету қатесі: {exc}")
 
 
+def cleanup_all(ec2, s3, iam, rds, ct) -> None:
+    """Барлық тесттік және түзетілген ресурстарды толық тазалау."""
+    print("=== Ресурстарды толық тазалау басталды ===")
+
+    # 1. RDS
+    print("--- [RDS] Өшірілуде ---")
+    for db_id in [RDS_PUBLIC_ID, RDS_PRIVATE_ID]:
+        try:
+            rds.delete_db_instance(DBInstanceIdentifier=db_id, SkipFinalSnapshot=True)
+            print(f"  [-] RDS жойылды: {db_id}")
+        except ClientError:
+            pass
+
+    # 2. CloudTrail
+    print("--- [CloudTrail] Өшірілуде ---")
+    try:
+        ct.stop_logging(Name=TRAIL_NAME)
+    except ClientError:
+        pass
+    try:
+        ct.delete_trail(Name=TRAIL_NAME)
+        print(f"  [-] Trail жойылды: {TRAIL_NAME}")
+    except ClientError:
+        pass
+
+    # 3. Security Groups
+    print("--- [EC2] Security Groups өшірілуде ---")
+    for sg_name in SG_NAMES:
+        try:
+            ec2.delete_security_group(GroupName=sg_name)
+            print(f"  [-] SG жойылды: {sg_name}")
+        except ClientError:
+            pass
+
+    # 4. EBS
+    print("--- [EC2] EBS томдары өшірілуде ---")
+    for tag in [TAG_VOL_UNENCRYPTED, TAG_VOL_ENCRYPTED]:
+        try:
+            res = ec2.describe_volumes(Filters=[{"Name": "tag:Name", "Values": [tag]}])
+            for v in res.get("Volumes", []):
+                if v.get("State") != "deleted":
+                    ec2.delete_volume(VolumeId=v["VolumeId"])
+                    print(f"  [-] EBS жойылды: {v['VolumeId']}")
+        except ClientError:
+            pass
+
+    # 5. S3 бакеттері
+    print("--- [S3] Бакеттер өшірілуде ---")
+    for b_name in [BUCKET_VULN_NAME, BUCKET_SAFE_NAME, BUCKET_CT_LOGS]:
+        try:
+            objs = s3.list_objects_v2(Bucket=b_name).get("Contents", [])
+            for obj in objs:
+                s3.delete_object(Bucket=b_name, Key=obj["Key"])
+            s3.delete_bucket(Bucket=b_name)
+            print(f"  [-] S3 бакеті жойылды: {b_name}")
+        except ClientError:
+            pass
+
+    # 6. IAM
+    print("--- [IAM] Өшірілуде ---")
+    # Құпиясөз саясатын өшіру
+    try:
+        iam.delete_account_password_policy()
+        print("  [-] IAM құпиясөз саясаты өшірілді")
+    except ClientError:
+        pass
+
+    # Пайдаланушылар мен MFA
+    for u_name in [IAM_USER_CONSOLE, IAM_USER_API]:
+        try:
+            mfa_devs = iam.list_mfa_devices(UserName=u_name).get("MFADevices", [])
+            for d in mfa_devs:
+                iam.deactivate_mfa_device(UserName=u_name, SerialNumber=d["SerialNumber"])
+                try:
+                    iam.delete_virtual_mfa_device(SerialNumber=d["SerialNumber"])
+                except ClientError:
+                    pass
+            try:
+                iam.delete_login_profile(UserName=u_name)
+            except ClientError:
+                pass
+            keys = iam.list_access_keys(UserName=u_name).get("AccessKeyMetadata", [])
+            for k in keys:
+                iam.delete_access_key(UserName=u_name, AccessKeyId=k["AccessKeyId"])
+            iam.delete_user(UserName=u_name)
+            print(f"  [-] IAM пайдаланушысы жойылды: {u_name}")
+        except ClientError:
+            pass
+
+    # Саясаттар
+    try:
+        policies = iam.list_policies(Scope="Local").get("Policies", [])
+        for p in policies:
+            if p["PolicyName"] in [POLICY_ADMIN_NAME, POLICY_SAFE_NAME]:
+                iam.delete_policy(PolicyArn=p["Arn"])
+                print(f"  [-] Саясат жойылды: {p['PolicyName']}")
+    except ClientError:
+        pass
+
+    print("=== Ресурстар толық тазартылды! ===")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Осал инфрақұрылымды автоматты түзету скрипті.")
     parser.add_argument("--endpoint-url", default=DEFAULT_ENDPOINT, help=f"Эмулятор URL (әдепкі: {DEFAULT_ENDPOINT})")
+    parser.add_argument("--cleanup", action="store_true", help="Барлық тесттік немесе түзетілген ресурстарды өшіру")
     args = parser.parse_args()
 
     check_emulator(args.endpoint_url)
@@ -281,6 +391,10 @@ def main() -> None:
     iam = session.client("iam", endpoint_url=args.endpoint_url)
     rds = session.client("rds", endpoint_url=args.endpoint_url)
     ct = session.client("cloudtrail", endpoint_url=args.endpoint_url)
+
+    if args.cleanup:
+        cleanup_all(ec2, s3, iam, rds, ct)
+        return
 
     print("=== БҰЛТТЫҚ ОРТАНЫ ТҮЗЕТУ (REMEDIATION) БАСТАЛДЫ ===")
     remediate_security_groups(ec2)

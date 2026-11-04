@@ -91,10 +91,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Қалыптастырылатын есеп файлының жолы (әдепкі бойынша: report.html).",
     )
     parser.add_argument(
+        "--json-output",
+        type=str,
+        default=None,
+        help="Қосымша JSON есеп файлын бірге сақтау жолы (мысалы: report.json).",
+    )
+    parser.add_argument(
         "--format",
         choices=["html", "json"],
         default="html",
-        help="Есеп беру форматы: html немесе json (әдепкі бойынша: html).",
+        help="Негізгі есеп беру форматы: html немесе json (әдепкі бойынша: html).",
     )
     parser.add_argument(
         "--min-severity",
@@ -269,6 +275,17 @@ def main() -> int:
                 score=score,
                 grade=grade,
                 output_path=args.output,
+                provider=args.provider,
+                region=region_display,
+            )
+
+        # Егер қосымша JSON есебі сұралса және негізгі формат json болмаса
+        if args.json_output and args.format != "json":
+            generate_json_report(
+                findings=filtered_findings,
+                score=score,
+                grade=grade,
+                output_path=args.json_output,
                 provider=args.provider,
                 region=region_display,
             )
