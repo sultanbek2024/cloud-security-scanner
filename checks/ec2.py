@@ -72,6 +72,16 @@ def check_ec2_001_open_ssh(session: boto3.Session) -> List[Finding]:
                                         "Сондай-ақ AWS Systems Manager Session Manager қызметін пайдалану ұсынылады."
                                     ),
                                     standard="CIS AWS Foundations Benchmark 5.2",
+                                    remediation_cli=f"aws ec2 revoke-security-group-ingress --group-id {sg_id} --protocol tcp --port 22 --cidr 0.0.0.0/0",
+                                    remediation_terraform=(
+                                        f'# Security Group ({sg_name}) ішіндегі 0.0.0.0/0 орнына тек сенімді IP көрсетіңіз:\n'
+                                        'ingress {\n'
+                                        '  from_port   = 22\n'
+                                        '  to_port     = 22\n'
+                                        '  protocol    = "tcp"\n'
+                                        '  cidr_blocks = ["YOUR_OFFICE_IP/32"]\n'
+                                        '}'
+                                    ),
                                 )
                             )
                             break
@@ -116,6 +126,12 @@ def check_ec2_002_unencrypted_ebs(session: boto3.Session) -> List[Finding]:
                                     "Сондай-ақ аймақ деңгейінде әдепкі шифрлауды (Encryption by default) белсендіріңіз."
                                 ),
                                 standard="CIS AWS Foundations Benchmark 2.2.1",
+                                remediation_cli=f"aws ec2 enable-ebs-encryption-by-default --region {region}",
+                                remediation_terraform=(
+                                    'resource "aws_ebs_encryption_by_default" "example" {\n'
+                                    '  enabled = true\n'
+                                    '}'
+                                ),
                             )
                         )
         except ClientError as exc:
@@ -179,6 +195,16 @@ def check_ec2_003_open_rdp(session: boto3.Session) -> List[Finding]:
                                         "немесе AWS Systems Manager Fleet Manager пайдаланыңыз."
                                     ),
                                     standard="CIS AWS Foundations Benchmark 5.3",
+                                    remediation_cli=f"aws ec2 revoke-security-group-ingress --group-id {sg_id} --protocol tcp --port 3389 --cidr 0.0.0.0/0",
+                                    remediation_terraform=(
+                                        f'# Security Group ({sg_name}) 3389 (RDP) портын жабыңыз немесе шектеңіз:\n'
+                                        'ingress {\n'
+                                        '  from_port   = 3389\n'
+                                        '  to_port     = 3389\n'
+                                        '  protocol    = "tcp"\n'
+                                        '  cidr_blocks = ["YOUR_OFFICE_IP/32"]\n'
+                                        '}'
+                                    ),
                                 )
                             )
                             break
@@ -241,6 +267,10 @@ def check_ec2_004_all_ports_open(session: boto3.Session) -> List[Finding]:
                                         "тек нақты қажетті порттар мен IP мекенжайларды ғана рұқсат етіңіз."
                                     ),
                                     standard="CIS AWS Foundations Benchmark 5.1",
+                                    remediation_cli=f"aws ec2 revoke-security-group-ingress --group-id {sg_id} --protocol -1 --cidr 0.0.0.0/0",
+                                    remediation_terraform=(
+                                        f'# Security Group ({sg_name}) ішіндегі protocol = "-1" немесе 0.0.0.0/0 ережесін өшіріңіз'
+                                    ),
                                 )
                             )
                             break

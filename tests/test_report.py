@@ -19,6 +19,9 @@ def sample_findings():
             description="22-портқа 0.0.0.0/0 мекенжайынан кіруге рұқсат берілген.",
             recommendation="Қолжетімділікті нақты IP мекенжайлармен шектеңіз.",
             standard="CIS AWS Foundations Benchmark 5.2",
+            remediation_cli="aws ec2 revoke-security-group-ingress --group-id sg-12345678 --protocol tcp --port 22 --cidr 0.0.0.0/0",
+            remediation_terraform='ingress { from_port = 22 to_port = 22 protocol = "tcp" cidr_blocks = ["10.0.0.0/16"] }',
+            is_drift=True,
         ),
         Finding(
             rule_id="IAM-001",
@@ -77,3 +80,5 @@ def test_generate_html_report():
         assert "EC2-001" in content
         assert "SSH (22-порт) бүкіл интернетке ашық" in content
         assert "Қауіпсіздік деңгейі" in content
+        assert "aws ec2 revoke-security-group-ingress" in content
+        assert "DRIFT" in content

@@ -79,6 +79,19 @@ def check_s3_001_public_access_block(session: boto3.Session) -> List[Finding]:
                             "(BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets = True)."
                         ),
                         standard="CIS AWS Foundations Benchmark 2.1.5",
+                        remediation_cli=(
+                            f"aws s3api put-public-access-block --bucket {bucket_name} "
+                            '--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"'
+                        ),
+                        remediation_terraform=(
+                            f'resource "aws_s3_bucket_public_access_block" "pab_{bucket_name}" {{\n'
+                            f'  bucket = "{bucket_name}"\n'
+                            "  block_public_acls       = true\n"
+                            "  block_public_policy     = true\n"
+                            "  ignore_public_acls      = true\n"
+                            "  restrict_public_buckets = true\n"
+                            "}"
+                        ),
                     )
                 )
 
@@ -140,6 +153,20 @@ def check_s3_002_default_encryption(session: boto3.Session) -> List[Finding]:
                             "әдепкі шифрлауды қосыңыз (Default Encryption)."
                         ),
                         standard="CIS AWS Foundations Benchmark 2.1.1",
+                        remediation_cli=(
+                            f"aws s3api put-bucket-encryption --bucket {bucket_name} "
+                            '--server-side-encryption-configuration \'{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}\''
+                        ),
+                        remediation_terraform=(
+                            f'resource "aws_s3_bucket_server_side_encryption_configuration" "enc_{bucket_name}" {{\n'
+                            f'  bucket = "{bucket_name}"\n'
+                            "  rule {\n"
+                            "    apply_server_side_encryption_by_default {\n"
+                            '      sse_algorithm = "AES256"\n'
+                            "    }\n"
+                            "  }\n"
+                            "}"
+                        ),
                     )
                 )
     except ClientError as exc:
@@ -188,6 +215,15 @@ def check_s3_003_bucket_versioning(session: boto3.Session) -> List[Finding]:
                                 "Versioning мүмкіндігін қосыңыз."
                             ),
                             standard="CIS AWS Foundations Benchmark 2.1.3",
+                            remediation_cli=f"aws s3api put-bucket-versioning --bucket {bucket_name} --versioning-configuration Status=Enabled",
+                            remediation_terraform=(
+                                f'resource "aws_s3_bucket_versioning" "ver_{bucket_name}" {{\n'
+                                f'  bucket = "{bucket_name}"\n'
+                                "  versioning_configuration {\n"
+                                '    status = "Enabled"\n'
+                                "  }\n"
+                                "}"
+                            ),
                         )
                     )
             except ClientError as exc:

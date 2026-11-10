@@ -2,7 +2,7 @@
 FastAPI қосымшасының негізгі кіру нүктесі (Application Entry Point).
 """
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from api.routes import router
@@ -12,6 +12,11 @@ app = FastAPI(
     description="Бұлттық инфрақұрылымның конфигурациялық осалдықтарын анықтау, IaC талдау және Drift анықтау жүйесі.",
     version="2.0.0",
 )
+
+# Favicon 404 қатесін болдырмау
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response(status_code=204)
 
 # CORS рұқсаттары
 app.add_middleware(

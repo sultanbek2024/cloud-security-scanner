@@ -57,6 +57,9 @@ class Finding:
     description: str
     recommendation: str
     standard: str
+    remediation_cli: str = ""
+    remediation_terraform: str = ""
+    is_drift: bool = False
 
     def to_dict(self) -> dict:
         """
@@ -65,4 +68,7 @@ class Finding:
         data = asdict(self)
         data["severity"] = self.severity.value
         data["severity_display"] = self.severity.display_name
+        data["is_drift"] = self.is_drift
+        data["remediation_cli"] = self.remediation_cli
+        data["remediation_terraform"] = self.remediation_terraform
         return data

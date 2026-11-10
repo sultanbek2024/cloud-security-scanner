@@ -15,6 +15,7 @@ class ScanRequest(BaseModel):
     endpoint_url: Optional[str] = Field(default=None, description="LocalStack / Moto URL (тестілеу үшін)")
     iac_path: Optional[str] = Field(default=None, description="Сервердегі Terraform файлы немесе папкасы")
     iac_content: Optional[str] = Field(default=None, description="Веб-интерфейстен тікелей енгізілген Terraform коды")
+    demo_mode: bool = Field(default=False, description="Демо режимі (эмуляцияланған бұлттық ресурстар мен Drift-ті көрсету)")
 
 
 class FindingSchema(BaseModel):

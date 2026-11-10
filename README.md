@@ -8,11 +8,13 @@ AWS бұлттық инфрақұрылымындағы конфигурация
 
 ## 🛠 Технологиялық стек
 - **Python**: 3.11+
+- **Web Framework**: `FastAPI` + `Uvicorn` (REST API & Web Dashboard)
 - **AWS SDK**: `boto3` (бұлттық ресурстармен байланыс)
+- **IaC Parser**: `python-hcl2` (Terraform .tf файлдарын статикалық талдау)
 - **Шаблонизатор**: `jinja2` (автономды интерактивті HTML-есептер құрастыру)
-- **Тестілеу**: `pytest`
+- **Тестілеу**: `pytest`, `httpx` (33 кешенді тест)
 - **Модельдеу / Мок**: `moto` (нақты AWS шығындарынсыз оқшауланған тестілеу)
-- **CLI интерфейсі**: тек кірістірілген стандартты `argparse`
+- **Контейнеризация**: `Docker`, `docker-compose`
 
 ---
 
@@ -20,10 +22,25 @@ AWS бұлттық инфрақұрылымындағы конфигурация
 
 ```text
 Diplom/
-├── scanner.py              # Негізгі CLI орындау нүктесі (--all-regions қолдауымен)
+├── scanner.py              # Негізгі CLI және Web орындау нүктесі (--web, --iac қолдауымен)
+├── Dockerfile              # Контейнерлеу конфигурациясы
+├── docker-compose.yml      # Жүйені бір командамен On-Premise көтеру
+├── api/                    # FastAPI REST API қызметі
+│   ├── __init__.py
+│   ├── main.py             # FastAPI негізгі кіру нүктесі және CORS
+│   ├── routes.py           # /api/v1/scan, /rules, /report эндпоинттері
+│   └── schemas.py          # Pydantic деректер сұлбалары
+├── web/                    # Заманауи Web UI дашборды
+│   └── index.html          # TailwindCSS негізіндегі интерактивті панель
+├── iac/                    # IaC (Terraform) Shift-Left сканері
+│   ├── __init__.py
+│   ├── parser.py           # python-hcl2 негізінде .tf файлдарын оқу
+│   ├── rules.py            # Terraform статикалық қауіпсіздік ережелері
+│   └── scanner.py          # IaC сканерлеу қозғалтқышы
 ├── core/                   # Бағдарламаның негізгі компоненттері
 │   ├── __init__.py
-│   ├── models.py           # Finding және Severity деректер үлгілері
+│   ├── models.py           # Finding, Severity және Remediation үлгілері
+│   ├── drift.py            # Бұлт пен код арасындағы Drift анықтау қозғалтқышы
 │   ├── engine.py           # Тексерулерді табу және оқшаулап орындау жүйесі
 │   ├── registry.py         # @register_check декораторы және тексерулер тізілімі
 │   └── scoring.py          # Тұрақты салмақталған қауіпсіздік балын (0-100) есептеу
@@ -41,7 +58,10 @@ Diplom/
 │   └── template.html       # Интерактивті сүзгісі бар HTML үлгісі (<html lang="kk">)
 ├── scripts/                # Қосымша утилиталар
 │   └── setup_vulnerable_env.py # Эмуляторды осал ресурстармен толтыру/тазалау
-├── tests/                  # Автоматтандырылған тесттер (23 тест)
+├── tests/                  # Автоматтандырылған тесттер (33 тест)
+│   ├── test_api.py         # FastAPI эндпоинттерін тестілеу
+│   ├── test_drift.py       # Drift Detection қозғалтқышын тестілеу
+│   ├── test_iac.py         # Terraform парсерін және ережелерін тестілеу
 │   ├── test_scoring.py     # Бағалау формуласының дұрыстығын тексеру
 │   ├── test_ec2_checks.py  # moto арқылы EC2 және EBS тексерулерін тестілеу
 │   ├── test_other_checks.py# S3, IAM, RDS, CloudTrail тексерулеріне арналған тесттер
@@ -78,7 +98,7 @@ pip install -r requirements.txt
 
 ## 🧪 Тесттерді іске қосу
 
-Жобадағы барлық модульдер `pytest` және `moto` кітапханалары арқылы толық тестіленген (барлығы 23 тест):
+Жобадағы барлық модульдер (AWS ережелері, IaC сканері, Drift қозғалтқышы және REST API) `pytest`, `httpx` және `moto` кітапханалары арқылы толық тестіленген (барлығы 33 кешенді тест):
 
 ```bash
 cd Diplom
@@ -89,10 +109,30 @@ pytest -v
 
 ## 💻 Бағдарламаны іске қосу нұсқаулығы
 
-### 1. LocalStack / moto_server арқылы іске қосу
+### 1. Интерактивті Web Dashboard және REST API іске қосу
 ```bash
-cd Diplom
+# Веб-серверді 8000 портында көтеру:
+python scanner.py --web --port 8000
 
+# Браузер арқылы ашу:
+# Веб-дашборд:          http://localhost:8000/dashboard
+# Swagger құжаттамасы:   http://localhost:8000/docs
+```
+
+### 2. Docker арқылы оқшауланған түрде іске қосу (On-Premise)
+```bash
+# Барлық жүйені контейнерде көтеру:
+docker compose up -d --build
+```
+
+### 3. CLI арқылы кешенді сканерлеу (AWS + Terraform IaC + Drift)
+```bash
+# Terraform кодын және AWS бұлтын қатар тексеру:
+python scanner.py --iac ./terraform-code/ --output report.html
+```
+
+### 4. LocalStack / moto_server арқылы тестілеу
+```bash
 # Тесттік осал ортаны дайындау:
 python scripts/setup_vulnerable_env.py --endpoint-url http://localhost:4566
 

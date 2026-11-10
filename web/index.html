@@ -66,31 +66,52 @@
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">AWS Аймағы (Region)</label>
+          <label for="regionInput" class="block text-xs font-medium text-slate-400 mb-1">AWS Аймағы (Region)</label>
           <input type="text" id="regionInput" value="us-east-1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Эмулятор URL (LocalStack / Moto)</label>
+          <label for="endpointInput" class="block text-xs font-medium text-slate-400 mb-1">Эмулятор URL (LocalStack / Moto)</label>
           <input type="text" id="endpointInput" placeholder="Мысалы: http://localhost:4566" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Сервердегі IaC папка жолы (міндетті емес)</label>
+          <label for="iacPathInput" class="block text-xs font-medium text-slate-400 mb-1">Сервердегі IaC папка жолы (міндетті емес)</label>
           <input type="text" id="iacPathInput" placeholder="Мысалы: ./terraform/" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
         </div>
       </div>
 
       <!-- Terraform кодын тікелей енгізу аймағы -->
       <div class="mb-4">
-        <label class="block text-xs font-medium text-slate-400 mb-1 flex justify-between">
+        <label for="iacContentInput" class="block text-xs font-medium text-slate-400 mb-1 flex justify-between">
           <span>Terraform кодын тікелей тексеру (HCL / .tf code)</span>
-          <span class="text-sky-400 cursor-pointer hover:underline" onclick="loadSampleTerraform()">[ Осал код мысалын қою ]</span>
+          <span class="text-sky-400 cursor-pointer hover:underline" onclick="loadSampleTerraform()">[ Осал код мысалын қайта жүктеу ]</span>
         </label>
-        <textarea id="iacContentInput" rows="3" placeholder="resource &quot;aws_security_group&quot; &quot;web&quot; { ... }" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-sky-500"></textarea>
+        <textarea id="iacContentInput" rows="5" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-sky-500">resource "aws_security_group" "vulnerable_sg" {
+  name        = "open-access-sg"
+  description = "Dangerous SG"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_s3_bucket" "open_bucket" {
+  bucket = "company-public-data"
+  acl    = "public-read"
+}</textarea>
       </div>
 
-      <div class="flex items-center justify-between pt-2 border-t border-slate-800">
-        <div class="text-xs text-slate-400 flex items-center gap-2">
-          <i class="fa-solid fa-circle-info text-sky-400"></i> Жүйе бір уақытта AWS бұлтын, Terraform кодын және Drift ауытқуларын тексереді.
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 cursor-pointer text-xs text-amber-300 font-medium bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg">
+            <input type="checkbox" id="demoModeInput" checked class="rounded border-slate-700 bg-slate-950 text-sky-500">
+            <span>Демо режим (AWS бұлты мен Drift-ті эмуляциялау)</span>
+          </label>
+          <span class="text-xs text-slate-400">
+            <i class="fa-solid fa-circle-info text-sky-400"></i> Жүйе бір уақытта AWS бұлтын, Terraform кодын және Drift-ті тексереді.
+          </span>
         </div>
         <button id="scanBtn" onclick="executeScan()" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium px-6 py-2.5 rounded-xl shadow-lg shadow-sky-500/25 flex items-center gap-2 transition text-sm">
           <i class="fa-solid fa-play"></i> <span>Сканерлеуді іске қосу</span>
@@ -111,7 +132,7 @@
           <span id="gradeBadge" class="text-xl font-bold px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">A</span>
         </div>
         <div class="w-full bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
-          <div id="scoreBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+          <div id="scoreBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-700" style="width: 0"></div>
         </div>
       </div>
 
@@ -216,7 +237,8 @@ resource "aws_s3_bucket" "open_bucket" {
         region: document.getElementById('regionInput').value || "us-east-1",
         endpoint_url: document.getElementById('endpointInput').value || null,
         iac_path: document.getElementById('iacPathInput').value || null,
-        iac_content: document.getElementById('iacContentInput').value || null
+        iac_content: document.getElementById('iacContentInput').value || null,
+        demo_mode: document.getElementById('demoModeInput').checked
       };
 
       try {
@@ -227,7 +249,8 @@ resource "aws_s3_bucket" "open_bucket" {
         });
 
         if (!response.ok) {
-          throw new Error('Сканерлеу кезінде серверден қате келді');
+          alert('Сканерлеу кезінде серверден қате келді');
+          return;
         }
 
         const data = await response.json();

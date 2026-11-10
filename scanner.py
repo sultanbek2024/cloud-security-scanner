@@ -7,12 +7,13 @@ import argparse
 import logging
 import os
 import sys
-from typing import List
+from typing import List, Optional
 import boto3
 
 from core.engine import ScanEngine
 from core.models import Finding, Severity
 from core.scoring import calculate_score, group_findings_by_severity
+from iac.scanner import scan_terraform
 from report.html_report import generate_html_report
 from report.json_report import generate_json_report
 
@@ -109,6 +110,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="Есепке енгізілетін минималды қауіптілік деңгейі (LOW, MEDIUM, HIGH, CRITICAL).",
     )
     parser.add_argument(
+        "--iac",
+        type=str,
+        default=None,
+        help="Terraform (*.tf) файлдары орналасқан файл немесе папка жолы (Shift-Left IaC сканерлеу).",
+    )
+    parser.add_argument(
+        "--web",
+        action="store_true",
+        help="FastAPI веб-серверін және интерактивті дашбордын (http://localhost:8000) іске қосу.",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="Веб-сервердің желілік порты (әдепкі бойынша: 8000).",
+    )
+    parser.add_argument(
         "--verbose",
         "-v",
         action="store_true",
@@ -119,9 +137,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def create_boto3_session(
-    profile: str | None,
+    profile: Optional[str],
     region: str,
-    endpoint_url: str | None,
+    endpoint_url: Optional[str],
     all_regions: bool = False,
 ) -> boto3.Session:
     """
@@ -226,6 +244,15 @@ def main() -> int:
         datefmt="%H:%M:%S",
     )
 
+    # Веб-сервер режимі (--web)
+    if args.web:
+        import uvicorn
+        print(f"\n{COLOR_GREEN}{COLOR_BOLD}[+] FastAPI веб-сервері іске қосылуда: http://localhost:{args.port}{COLOR_RESET}")
+        print(f"{COLOR_CYAN}[+] Веб-дашборд: http://localhost:{args.port}/dashboard{COLOR_RESET}")
+        print(f"{COLOR_CYAN}[+] Swagger API құжаттамасы: http://localhost:{args.port}/docs{COLOR_RESET}\n")
+        uvicorn.run("api.main:app", host="0.0.0.0", port=args.port, reload=False)
+        return 0
+
     try:
         session = create_boto3_session(
             profile=args.profile,
@@ -245,6 +272,23 @@ def main() -> int:
 
     engine = ScanEngine(session=session)
     all_findings, total_checks = engine.run()
+
+    # Егер --iac көрсетілсе, Terraform файлдарын статикалық талдау
+    if args.iac:
+        if os.path.exists(args.iac):
+            from core.drift import correlate_and_detect_drift
+            from iac.scanner import get_declared_resources
+
+            # 1. IaC статикалық қауіптерін табу (Shift-Left)
+            iac_findings = scan_terraform(args.iac)
+            all_findings.extend(iac_findings)
+            total_checks += 4
+
+            # 2. Drift Detection: бұлттық табыстар мен Terraform ресурстарын салыстыру
+            iac_resources = get_declared_resources(args.iac)
+            all_findings = correlate_and_detect_drift(all_findings, iac_resources)
+        else:
+            print(f"{COLOR_YELLOW}[ЕСКЕРТУ] Көрсетілген IaC жолы табылмады: {args.iac}{COLOR_RESET}", file=sys.stderr)
 
     # Минималды қауіптілік деңгейі бойынша сүзу
     filtered_findings = all_findings

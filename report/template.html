@@ -388,17 +388,41 @@
               <td><span class="rule-id">{{ item.rule_id }}</span></td>
               <td>
                 <span class="badge badge-{{ item.severity.value }}">{{ item.severity.display_name }}</span>
+                {% if item.is_drift %}
+                <br><span class="badge" style="background:#eab308; color:#000; font-weight:700; margin-top:0.25rem; font-size:0.7rem;">⚠️ DRIFT</span>
+                {% endif %}
               </td>
               <td>
                 <strong>{{ item.title }}</strong><br>
                 <span class="resource-id">{{ item.resource }}</span>
               </td>
-              <td style="max-width: 340px;">{{ item.description }}</td>
-              <td style="max-width: 320px;">
+              <td style="max-width: 320px;">{{ item.description }}</td>
+              <td style="max-width: 360px;">
                 <div class="recommendation-box">
                   <div class="recommendation-title">Ұсыныс:</div>
                   {{ item.recommendation }}
                 </div>
+                {% if item.remediation_cli or item.remediation_terraform %}
+                <details style="margin-top: 0.5rem; background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 0.375rem; padding: 0.4rem 0.6rem;">
+                  <summary style="cursor: pointer; font-size: 0.78rem; font-weight: 600; color: #38bdf8; user-select: none;">
+                    🛠 Авто-түзету шешімі (1-Click Remediation)
+                  </summary>
+                  <div style="margin-top: 0.4rem; font-size: 0.75rem;">
+                    {% if item.remediation_cli %}
+                      <div style="margin-bottom: 0.4rem;">
+                        <span style="color: #94a3b8; font-weight: 600;">AWS CLI пәрмені:</span>
+                        <pre style="background: #0f172a; padding: 0.4rem 0.6rem; border-radius: 0.25rem; overflow-x: auto; color: #a5f3fc; margin-top: 0.2rem; font-family: monospace; white-space: pre-wrap; word-break: break-all;"><code>{{ item.remediation_cli }}</code></pre>
+                      </div>
+                    {% endif %}
+                    {% if item.remediation_terraform %}
+                      <div>
+                        <span style="color: #94a3b8; font-weight: 600;">Terraform коды (IaC):</span>
+                        <pre style="background: #0f172a; padding: 0.4rem 0.6rem; border-radius: 0.25rem; overflow-x: auto; color: #86efac; margin-top: 0.2rem; font-family: monospace; white-space: pre-wrap; word-break: break-all;"><code>{{ item.remediation_terraform }}</code></pre>
+                      </div>
+                    {% endif %}
+                  </div>
+                </details>
+                {% endif %}
               </td>
               <td>
                 <span class="standard-tag">{{ item.standard }}</span>

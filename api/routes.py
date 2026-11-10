@@ -17,7 +17,6 @@ from core.drift import correlate_and_detect_drift
 from core.registry import get_registered_checks
 from iac.scanner import scan_terraform, get_declared_resources
 from report.html_report import generate_html_report
-from report.json_report import generate_json_report
 from api.schemas import ScanRequest, ScanResponse, FindingSchema, RuleInfoSchema
 
 logger = logging.getLogger(__name__)
@@ -99,11 +98,50 @@ def run_scan(req: ScanRequest) -> ScanResponse:
 
     # 2. AWS Runtime сканерлеу
     try:
-        session = _create_session(req)
-        engine = ScanEngine(session=session)
-        cloud_findings, checks_count = engine.run()
-        all_findings.extend(cloud_findings)
-        total_checks += checks_count
+        if req.demo_mode:
+            # Демо режим: бұлттық нақты орта мен Drift ауытқуын демонстрациялау үшін
+            demo_cloud_findings = [
+                Finding(
+                    rule_id="EC2-003",
+                    title="RDP (3389-порт) бүкіл интернетке ашық",
+                    resource="sg-0a1b2c3d (vulnerable_sg) [us-east-1]",
+                    severity=Severity.HIGH,
+                    description="3389-портқа 0.0.0.0/0 үшін кіруге рұқсат берілген.",
+                    recommendation="3389 портына қолжетімділікті тек сенімді VPN немесе жеке IP-мен шектеңіз.",
+                    standard="CIS AWS Foundations Benchmark 5.3",
+                    remediation_cli="aws ec2 revoke-security-group-ingress --group-id sg-0a1b2c3d --protocol tcp --port 3389 --cidr 0.0.0.0/0",
+                    remediation_terraform='cidr_blocks = ["YOUR_COMPANY_IP/32"]',
+                ),
+                Finding(
+                    rule_id="S3-001",
+                    title="S3 бакетінде жария қолжетімділікті бұғаттау толық қосылмаған",
+                    resource="arn:aws:s3:::company-public-data",
+                    severity=Severity.HIGH,
+                    description="'company-public-data' S3 бакетінде Amazon S3 Block Public Access өшірілген.",
+                    recommendation="S3 бакеті үшін 'Block all public access' баптауын толықтай қосыңыз.",
+                    standard="CIS AWS Foundations Benchmark 2.1.5",
+                    remediation_cli='aws s3api put-public-access-block --bucket company-public-data --public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"',
+                    remediation_terraform='resource "aws_s3_bucket_public_access_block" "pab_demo" { bucket = "company-public-data" }',
+                ),
+                Finding(
+                    rule_id="IAM-002",
+                    title="Root аккаунтында MFA құрылғысы қосылмаған",
+                    resource="arn:aws:iam::123456789012:root",
+                    severity=Severity.CRITICAL,
+                    description="Негізгі AWS Root аккаунты тек логин және құпиясөзбен қорғалған, екі факторлы қорғаныс жоқ.",
+                    recommendation="Root аккаунты үшін виртуалды немесе аппараттық MFA құрылғысын белсендіріңіз.",
+                    standard="CIS AWS Foundations Benchmark 1.5",
+                    remediation_cli="aws iam enable-mfa-device --user-name root ...",
+                ),
+            ]
+            all_findings.extend(demo_cloud_findings)
+            total_checks += 15
+        else:
+            session = _create_session(req)
+            engine = ScanEngine(session=session)
+            cloud_findings, checks_count = engine.run()
+            all_findings.extend(cloud_findings)
+            total_checks += checks_count
     except Exception as exc:
         logger.warning("AWS сессиясын орындау кезінде ескерту: %s", exc)
 
