@@ -18,11 +18,12 @@ app = FastAPI(
 def favicon():
     return Response(status_code=204)
 
-# CORS рұқсаттары
+# CORS рұқсаттары (қауіпсіздік талаптарына сай credentials=False немесе нақты origin)
+CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=CORS_ORIGINS if os.getenv("CORS_ORIGINS") else ["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -43,4 +44,5 @@ def serve_dashboard():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
+    host = os.getenv("SCANNER_HOST", "127.0.0.1")
+    uvicorn.run("api.main:app", host=host, port=8000, reload=True)

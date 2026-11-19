@@ -211,3 +211,56 @@ def test_ct_002_log_validation_disabled(aws_session):
     assert findings[0].rule_id == "CT-002"
     assert findings[0].severity == Severity.LOW
     assert "unvalidated-trail" in findings[0].resource
+
+
+# --- Таза (қауіпсіз) конфигурацияларға арналған негативті тесттер ---
+
+@mock_aws
+def test_s3_clean_bucket_no_findings(aws_session):
+    """Қауіпсіз бапталған (PAB, шифрлау, versioning) бакетте ешқандай қауіп табылмауы тиіс."""
+    s3 = aws_session.client("s3")
+    b_name = "clean-secured-bucket"
+    s3.create_bucket(Bucket=b_name)
+    s3.put_public_access_block(
+        Bucket=b_name,
+        PublicAccessBlockConfiguration={
+            "BlockPublicAcls": True,
+            "IgnorePublicAcls": True,
+            "BlockPublicPolicy": True,
+            "RestrictPublicBuckets": True,
+        },
+    )
+    s3.put_bucket_encryption(
+        Bucket=b_name,
+        ServerSideEncryptionConfiguration={
+            "Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]
+        },
+    )
+    s3.put_bucket_versioning(
+        Bucket=b_name,
+        VersioningConfiguration={"Status": "Enabled"},
+    )
+
+    f1 = check_s3_001_public_access_block(aws_session)
+    f2 = check_s3_002_default_encryption(aws_session)
+    f3 = check_s3_003_bucket_versioning(aws_session)
+
+    assert len(f1) == 0
+    assert len(f2) == 0
+    assert len(f3) == 0
+
+
+@mock_aws
+def test_rds_private_instance_no_findings(aws_session):
+    """Жабық (PubliclyAccessible=False) RDS инстансында қауіп шықпауы тиіс."""
+    rds = aws_session.client("rds", region_name="us-east-1")
+    rds.create_db_instance(
+        DBInstanceIdentifier="private-corporate-db",
+        AllocatedStorage=20,
+        DBInstanceClass="db.t3.micro",
+        Engine="postgres",
+        PubliclyAccessible=False,
+    )
+    findings = check_rds_001_public_instance(aws_session)
+    assert len(findings) == 0
+

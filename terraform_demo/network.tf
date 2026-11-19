@@ -11,11 +11,11 @@ resource "aws_security_group" "prod_web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Қауіпті: RDP (3389) бүкіл әлемге ашық
+  # Қауіпті: RDP (3389) бүкіл әлемге ашық (IPv6 арқылы)
   ingress {
-    from_port   = 3389
-    to_port     = 3389
-    protocol    = "tcp"
-    cidr_blocks = ["::/0"]
+    from_port        = 3389
+    to_port          = 3389
+    protocol         = "tcp"
+    ipv6_cidr_blocks = ["::/0"]
   }
 }

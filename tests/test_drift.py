@@ -130,3 +130,77 @@ def test_no_drift_when_vulnerability_originated_in_iac_code():
     # Кодта өзі жазылғандықтан, is_drift False болып қалуы керек
     assert updated[0].is_drift is False
     assert not updated[0].title.startswith("[DRIFT]")
+
+
+def test_exact_sg_name_match_avoids_substring_false_positive():
+    """
+    4-жағдай: 'web' атауы бар SG 'web-legacy-admin' сияқты басқа топпен шатаспауы тиіс.
+    Егер кодта 'web' қауіпсіз болса, ал бұлтта 'web-legacy-admin' тұрса,
+    ол оған қате Drift байламай, кодта жоқ Shadow ресурс деп тануы керек.
+    """
+    iac = [
+        TerraformResource(
+            resource_type="aws_security_group",
+            resource_name="web",
+            config={
+                "name": "web",
+                "ingress": [
+                    {
+                        "from_port": 443,
+                        "to_port": 443,
+                        "protocol": "tcp",
+                        "cidr_blocks": ["0.0.0.0/0"],
+                    }
+                ],
+            },
+        )
+    ]
+
+    live_findings = [
+        Finding(
+            rule_id="EC2-001",
+            title="SSH (22-порт) бүкіл интернетке ашық",
+            resource="sg-55555555 (web-legacy-admin) [us-east-1]",
+            severity=Severity.HIGH,
+            description="22-порт ашық.",
+            recommendation="Жабыңыз.",
+            standard="CIS AWS Foundations Benchmark 5.2",
+        )
+    ]
+
+    updated = correlate_and_detect_drift(live_findings, iac)
+    assert len(updated) == 1
+    # Бұл 'web' емес, бөлек 'web-legacy-admin', сондықтан Shadow деп танылуы керек
+    assert updated[0].is_drift is True
+    assert "Shadow / Unmanaged" in updated[0].description
+
+
+def test_shadow_rds_drift_detected():
+    """
+    5-жағдай: Бұлтта ашық RDS инстансы бар, бірақ Terraform кодында мүлдем жазылмаған.
+    Ол Shadow Database ретінде Drift деп белгіленуі тиіс.
+    """
+    empty_iac = []
+    live_findings = [
+        Finding(
+            rule_id="RDS-001",
+            title="RDS инстансы бүкіл интернетке ашық",
+            resource="mydb-prod.c1234567890.us-east-1.rds.amazonaws.com",
+            severity=Severity.CRITICAL,
+            description="RDS инстансы PubliclyAccessible=True болып тұр.",
+            recommendation="Қоғамдық қолжетімділікті өшіріңіз.",
+            standard="CIS AWS Foundations Benchmark 2.3.1",
+        )
+    ]
+
+    updated = correlate_and_detect_drift(live_findings, [
+        TerraformResource(
+            resource_type="aws_s3_bucket",
+            resource_name="some_bucket",
+            config={"bucket": "some-bucket"}
+        )
+    ])
+    assert len(updated) == 1
+    assert updated[0].is_drift is True
+    assert "Shadow Database" in updated[0].description
+

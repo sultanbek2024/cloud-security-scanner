@@ -24,10 +24,14 @@ def check_iac_security_groups(resources: List[TerraformResource]) -> List[Findin
                     continue
 
                 cidr_blocks = ing.get("cidr_blocks", [])
+                ipv6_cidr_blocks = ing.get("ipv6_cidr_blocks", [])
                 if isinstance(cidr_blocks, (str, int)):
                     cidr_blocks = [cidr_blocks]
+                if isinstance(ipv6_cidr_blocks, (str, int)):
+                    ipv6_cidr_blocks = [ipv6_cidr_blocks]
 
-                clean_cidrs = [str(c).strip('"\'') for c in cidr_blocks]
+                all_cidrs = list(cidr_blocks) + list(ipv6_cidr_blocks)
+                clean_cidrs = [str(c).strip('"\'') for c in all_cidrs]
                 is_public = any(cidr in ("0.0.0.0/0", "::/0") for cidr in clean_cidrs)
                 if not is_public:
                     continue
@@ -101,10 +105,14 @@ def check_iac_security_groups(resources: List[TerraformResource]) -> List[Findin
             rule_type = str(res.config.get("type", "")).strip('"\'')
             if rule_type == "ingress":
                 cidr_blocks = res.config.get("cidr_blocks", [])
+                ipv6_cidr_blocks = res.config.get("ipv6_cidr_blocks", [])
                 if isinstance(cidr_blocks, (str, int)):
                     cidr_blocks = [cidr_blocks]
+                if isinstance(ipv6_cidr_blocks, (str, int)):
+                    ipv6_cidr_blocks = [ipv6_cidr_blocks]
 
-                clean_cidrs = [str(c).strip('"\'') for c in cidr_blocks]
+                all_cidrs = list(cidr_blocks) + list(ipv6_cidr_blocks)
+                clean_cidrs = [str(c).strip('"\'') for c in all_cidrs]
                 if any(cidr in ("0.0.0.0/0", "::/0") for cidr in clean_cidrs):
                     from_port = res.config.get("from_port")
                     to_port = res.config.get("to_port")

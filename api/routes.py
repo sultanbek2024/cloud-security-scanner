@@ -98,8 +98,11 @@ def run_scan(req: ScanRequest) -> ScanResponse:
 
     # 2. AWS Runtime сканерлеу
     try:
-        if req.demo_mode:
-            # Демо режим: бұлттық нақты орта мен Drift ауытқуын демонстрациялау үшін
+        if req.demo_preset == "clean":
+            # Қорғалған орта сынағы: барлық ресурстар талаптарға сай, 0 осалдық, 100/100 балл (Grade A)
+            total_checks += 15
+        elif req.demo_mode or req.demo_preset == "vulnerable":
+            # Осал демо режим: бұлттық орта мен Drift ауытқуын демонстрациялау үшін
             demo_cloud_findings = [
                 Finding(
                     rule_id="EC2-003",

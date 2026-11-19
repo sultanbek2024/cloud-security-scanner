@@ -6,19 +6,22 @@
   <title>Бұлттық қауіпсіздік есебі (AWS Cloud Scanner)</title>
   <style>
     :root {
-      --bg-primary: #0f172a;
-      --bg-secondary: #1e293b;
-      --bg-card: #1e293b;
+      --bg-primary: #0a1120;
+      --bg-secondary: #0f1c34;
+      --bg-card: #13223f;
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
-      --border-color: #334155;
-      --accent-blue: #3b82f6;
+      --border-color: #1e355b;
+      --accent-blue: #0062bd;
+      --satbayev-blue: #0056b3;
+      --satbayev-cyan: #00b2fe;
+      --satbayev-gold: #f59e0b;
       --severity-critical: #ef4444;
       --severity-high: #f97316;
       --severity-medium: #eab308;
-      --severity-low: #06b6d4;
-      --grade-a: #22c55e;
-      --grade-b: #3b82f6;
+      --severity-low: #00b2fe;
+      --grade-a: #10b981;
+      --grade-b: #0062bd;
       --grade-c: #eab308;
       --grade-d: #f97316;
       --grade-f: #ef4444;
@@ -312,12 +315,16 @@
 </head>
 <body>
   <div class="container">
-    <header>
+    <header style="background: linear-gradient(135deg, rgba(0, 86, 179, 0.25) 0%, rgba(15, 28, 52, 0.8) 100%); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-color); margin-bottom: 2rem;">
       <div class="header-title">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <span style="font-size: 0.75rem; font-weight: 800; background: var(--satbayev-blue); color: #ffffff; padding: 0.25rem 0.6rem; border-radius: 0.375rem; letter-spacing: 0.05em;">SATBAYEV UNIVERSITY</span>
+          <span style="font-size: 0.75rem; color: var(--satbayev-cyan); font-weight: 600;">Дипломдық жұмыс &bull; Бакалавриат</span>
+        </div>
         <h1>Бұлттық қауіпсіздік аудит есебі</h1>
-        <p>AWS инфрақұрылымындағы конфигурациялық осалдықтарды талдау</p>
+        <p>AWS инфрақұрылымындағы конфигурациялық осалдықтарды талдау &bull; Автор: <strong>Абдразах С.Ш.</strong></p>
       </div>
-      <div class="meta-badge">
+      <div class="meta-badge" style="background: rgba(0, 0, 0, 0.4); border-color: rgba(255, 255, 255, 0.1);">
         Сканерлеу уақыты: <strong>{{ scan_time }}</strong> | Провайдер: <strong>{{ provider }}</strong> | Аймақ: <strong>{{ region }}</strong>
       </div>
     </header>
@@ -441,7 +448,7 @@
     </div>
 
     <footer>
-      <p>Дипломдық жоба: Бұлттық қауіпсіздік сканері (cloud-scanner) &bull; CIS AWS Foundations Benchmark негізінде</p>
+      <p>Сәтбаев Университеті (Satbayev University) &bull; Дипломдық жоба: <strong>Абдразах С.Ш.</strong> &bull; Бұлттық қауіпсіздік сканері &bull; CIS AWS Foundations Benchmark</p>
     </footer>
   </div>
 

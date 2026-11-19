@@ -16,6 +16,7 @@ class ScanRequest(BaseModel):
     iac_path: Optional[str] = Field(default=None, description="Сервердегі Terraform файлы немесе папкасы")
     iac_content: Optional[str] = Field(default=None, description="Веб-интерфейстен тікелей енгізілген Terraform коды")
     demo_mode: bool = Field(default=False, description="Демо режимі (эмуляцияланған бұлттық ресурстар мен Drift-ті көрсету)")
+    demo_preset: Optional[str] = Field(default=None, description="Демо пресет түрі: 'clean' (100% қауіпсіз) немесе 'vulnerable' (осал)")
 
 
 class FindingSchema(BaseModel):

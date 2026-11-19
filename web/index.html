@@ -1,93 +1,1058 @@
 <!DOCTYPE html>
-<html lang="kk" class="dark">
+<html lang="kk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Бұлттық қауіпсіздік сканері | Cloud Security Posture Management</title>
+  <title>CloudSec Auditor | Satbayev University</title>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
           colors: {
-            brand: {
-              50: '#f0f9ff',
-              500: '#0ea5e9',
-              600: '#0284c7',
-              700: '#0369a1',
+            satbayev: {
+              50: '#f0f6ff',
+              100: '#e0edfe',
+              500: '#0062bd',
+              600: '#0056b3',
+              700: '#00438c',
+              800: '#00336b',
+              900: '#002248',
+              cyan: '#00b2fe',
+              gold: '#f59e0b',
             }
           }
         }
       }
     }
   </script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    /* =============================================================
+       SATBAYEV UNIVERSITY - 4 КАРДИНАЛДЫ ТҮРДЕ ӨЗГЕШЕ ЛЕЙАУТТАР
+       (4 ТҮРЛІ ОРНАЛАСУ / 4 DIFFERENT LAYOUT ARCHITECTURES)
+       ============================================================= */
+
+    /* -------------------------------------------------------------
+       1. PORTAL: КЛАССИКАЛЫҚ ТІК ПОРТАЛ СТИЛІ (stud.satbayev.university)
+       ------------------------------------------------------------- */
+    body[data-theme="portal"] {
+      --bg-page: #f1f5f9;
+      --header-bg: linear-gradient(135deg, #0056b3 0%, #00438c 100%);
+      --header-text: #ffffff;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-shadow: 0 10px 25px -5px rgba(0, 86, 179, 0.08), 0 4px 6px -2px rgba(0, 86, 179, 0.04);
+      --card-radius: 1rem;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #94a3b8;
+      --primary: #0056b3;
+      --accent: #00b2fe;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --table-header: #f8fafc;
+      --code-bg: #0f172a;
+      --code-text: #38bdf8;
+      --badge-bg: #e0f2fe;
+      --badge-text: #0369a1;
+      --scan-btn-bg: linear-gradient(135deg, #0062bd 0%, #004b93 100%);
+      --scan-btn-shadow: 0 10px 20px -5px rgba(0, 98, 189, 0.35);
+    }
+
+    /* -------------------------------------------------------------
+       2. GLASS STUDIO: ЕКІ БАҒАНДЫ СПЛИТ-ЭКРАН (SPLIT STUDIO LAYOUT)
+       Слева - редактор и кнопки; Справа - живой спидометр и статус!
+       ------------------------------------------------------------- */
+    body[data-theme="glass"] {
+      --bg-page: #e3effc;
+      --header-bg: rgba(0, 86, 179, 0.85);
+      --header-text: #ffffff;
+      --card-bg: rgba(255, 255, 255, 0.72);
+      --card-border: rgba(255, 255, 255, 0.9);
+      --card-shadow: 0 20px 40px -12px rgba(0, 86, 179, 0.18), 0 0 18px rgba(0, 178, 254, 0.1);
+      --card-radius: 1.25rem;
+      --text-main: #06182c;
+      --text-sub: #1e3a5f;
+      --text-muted: #475569;
+      --primary: #0062bd;
+      --accent: #00b2fe;
+      --input-bg: rgba(255, 255, 255, 0.85);
+      --input-border: rgba(0, 98, 189, 0.25);
+      --table-header: rgba(235, 244, 255, 0.9);
+      --code-bg: #07152d;
+      --code-text: #67e8f9;
+      --badge-bg: rgba(0, 178, 254, 0.18);
+      --badge-text: #0284c7;
+      --scan-btn-bg: linear-gradient(135deg, #0077e6 0%, #0056b3 100%);
+      --scan-btn-shadow: 0 12px 25px -4px rgba(0, 178, 254, 0.45);
+    }
+    body[data-theme="glass"] .soft-aurora {
+      display: block !important;
+    }
+    body[data-theme="glass"] #mainHeader {
+      background: rgba(0, 86, 179, 0.85) !important;
+      backdrop-filter: blur(24px) saturate(180%) !important;
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+    }
+    body[data-theme="glass"] .ui-card {
+      background: rgba(255, 255, 255, 0.72) !important;
+      backdrop-filter: blur(20px) saturate(190%) !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+      box-shadow: 0 20px 40px -12px rgba(0, 86, 179, 0.16) !important;
+    }
+    body[data-theme="glass"] .ui-card:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 25px 45px -10px rgba(0, 86, 179, 0.22), 0 0 25px rgba(0, 178, 254, 0.25) !important;
+    }
+    /* SPLIT-STUDIO GRID: Двухколоночный режим */
+    @media (min-width: 1024px) {
+      body[data-theme="glass"] #layoutGrid {
+        display: grid !important;
+        grid-template-columns: 1.05fr 0.95fr !important;
+        grid-template-areas:
+          "controls hero"
+          "controls stats"
+          "table table" !important;
+        gap: 1.5rem !important;
+        align-items: start !important;
+      }
+      body[data-theme="glass"] #boxControls { grid-area: controls !important; }
+      body[data-theme="glass"] #boxHero { grid-area: hero !important; }
+      body[data-theme="glass"] #statsSection { grid-area: stats !important; }
+      body[data-theme="glass"] #boxTable { grid-area: table !important; }
+      body[data-theme="glass"] #boxStatsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      body[data-theme="glass"] #boxStatsGrid > div:first-child {
+        grid-column: span 2 !important;
+      }
+    }
+
+    /* -------------------------------------------------------------
+       3. BENTO: МОДУЛЬДІК АСИММЕТРИЯЛЫҚ BENTO-GRID 2026
+       Apple/Linear стиліндегі парящий остров және асимметриялық тор
+       ------------------------------------------------------------- */
+    body[data-theme="bento"] {
+      --bg-page: #f8fafc;
+      --header-bg: #ffffff;
+      --header-text: #0f172a;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-shadow: 0 6px 24px -2px rgba(15, 23, 42, 0.07);
+      --card-radius: 1.75rem;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #94a3b8;
+      --primary: #0056b3;
+      --accent: #0284c7;
+      --input-bg: #f8fafc;
+      --input-border: #e2e8f0;
+      --table-header: #f1f5f9;
+      --code-bg: #0f172a;
+      --code-text: #38bdf8;
+      --badge-bg: #eff6ff;
+      --badge-text: #1d4ed8;
+      --scan-btn-bg: linear-gradient(135deg, #0056b3 0%, #003e7e 100%);
+      --scan-btn-shadow: 0 10px 24px -4px rgba(0, 86, 179, 0.35);
+    }
+    body[data-theme="bento"] {
+      background-image: radial-gradient(rgba(0, 86, 179, 0.18) 1.2px, transparent 1.2px) !important;
+      background-size: 24px 24px !important;
+    }
+    body[data-theme="bento"] #mainHeader {
+      max-width: 80rem !important;
+      margin: 1.25rem auto 0 auto !important;
+      border-radius: 1.5rem !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      color: #0f172a !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 14px 30px -5px rgba(15, 23, 42, 0.08) !important;
+      backdrop-filter: blur(16px) !important;
+    }
+    body[data-theme="bento"] #headerLogoBox {
+      background: #0056b3 !important;
+    }
+    body[data-theme="bento"] #headerLogoBox svg {
+      color: #ffffff !important;
+    }
+    body[data-theme="bento"] #headerBrandTitle {
+      color: #0056b3 !important;
+    }
+    body[data-theme="bento"] #headerCloudSecBadge {
+      background: #e0edfe !important;
+      color: #0056b3 !important;
+      border-color: #bfdbfe !important;
+    }
+    body[data-theme="bento"] #headerSubtitle {
+      color: #64748b !important;
+    }
+    body[data-theme="bento"] #themeSwitcherBox {
+      background: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+    }
+    body[data-theme="bento"] .ui-card {
+      border-radius: 1.75rem !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06) !important;
+    }
+    /* BENTO-GRID LAYOUT */
+    @media (min-width: 1024px) {
+      body[data-theme="bento"] #layoutGrid {
+        display: grid !important;
+        grid-template-columns: 7fr 5fr !important;
+        grid-template-areas:
+          "hero stats"
+          "controls stats"
+          "table table" !important;
+        gap: 1.25rem !important;
+        align-items: stretch !important;
+      }
+      body[data-theme="bento"] #boxHero { grid-area: hero !important; }
+      body[data-theme="bento"] #boxControls { grid-area: controls !important; }
+      body[data-theme="bento"] #statsSection { grid-area: stats !important; }
+      body[data-theme="bento"] #boxTable { grid-area: table !important; }
+      body[data-theme="bento"] #boxStatsGrid {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        gap: 1rem !important;
+      }
+      body[data-theme="bento"] #boxStatsGrid > div:first-child {
+        flex: 1.2 !important;
+      }
+      body[data-theme="bento"] #boxStatsCounters {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+      }
+    }
+
+    /* -------------------------------------------------------------
+       4. ENTERPRISE SOC: КӘСІБИ СОЛ ЖАҚ САЙДБАР (SIDEBAR COMMAND LAYOUT)
+       Сол жақта тұрақты навигация мәзірі, оң жақта кибер-орталық!
+       ------------------------------------------------------------- */
+    body[data-theme="enterprise"] {
+      --bg-page: #061024;
+      --header-bg: #071530;
+      --header-text: #f8fafc;
+      --card-bg: #0b1a38;
+      --card-border: rgba(0, 102, 255, 0.3);
+      --card-shadow: 0 10px 30px rgba(0, 15, 45, 0.7), 0 0 15px rgba(0, 102, 255, 0.12);
+      --card-radius: 1rem;
+      --text-main: #f8fafc;
+      --text-sub: #7dd3fc;
+      --text-muted: #64748b;
+      --primary: #0066ff;
+      --accent: #00f0ff;
+      --input-bg: #040c1c;
+      --input-border: rgba(0, 102, 255, 0.35);
+      --table-header: #061226;
+      --code-bg: #020712;
+      --code-text: #00f0ff;
+      --badge-bg: rgba(0, 240, 255, 0.15);
+      --badge-text: #00f0ff;
+      --scan-btn-bg: linear-gradient(135deg, #0066ff 0%, #0047ba 100%);
+      --scan-btn-shadow: 0 0 25px rgba(0, 102, 255, 0.5);
+    }
+    body[data-theme="enterprise"] {
+      background-color: #061024 !important;
+      background-image: 
+        linear-gradient(rgba(0, 102, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 102, 255, 0.06) 1px, transparent 1px) !important;
+      background-size: 32px 32px !important;
+      color: #f8fafc !important;
+    }
+    /* Сайдбарды көрсету */
+    body[data-theme="enterprise"] #socSidebar {
+      display: flex !important;
+    }
+    @media (min-width: 1024px) {
+      body[data-theme="enterprise"] {
+        flex-direction: row !important;
+      }
+      body[data-theme="enterprise"] #mainHeader {
+        display: none !important;
+      }
+      body[data-theme="enterprise"] #enterpriseTopBar {
+        display: flex !important;
+      }
+    }
+    body[data-theme="enterprise"] .ui-card {
+      background: #0b1a38 !important;
+      border: 1px solid rgba(0, 102, 255, 0.3) !important;
+      box-shadow: 0 10px 30px rgba(0, 15, 45, 0.7), 0 0 15px rgba(0, 102, 255, 0.12) !important;
+      color: #f8fafc !important;
+    }
+    body[data-theme="enterprise"] input,
+    body[data-theme="enterprise"] textarea {
+      background: #040c1c !important;
+      color: #f8fafc !important;
+      border-color: rgba(0, 102, 255, 0.35) !important;
+    }
+    body[data-theme="enterprise"] #findingsTable thead tr {
+      background: #061226 !important;
+      color: #7dd3fc !important;
+      border-color: rgba(0, 102, 255, 0.25) !important;
+    }
+    body[data-theme="enterprise"] #findingsTable tbody tr {
+      border-color: rgba(0, 102, 255, 0.15) !important;
+    }
+    body[data-theme="enterprise"] #findingsTable tbody tr:hover {
+      background: rgba(0, 102, 255, 0.08) !important;
+    }
+    body[data-theme="enterprise"] footer {
+      background: #050e20 !important;
+      border-color: rgba(0, 102, 255, 0.2) !important;
+      color: #7dd3fc !important;
+    }
+
+    /* -------------------------------------------------------------
+       ОРТАҚ СТИЛЬДЕР ЖӘНЕ АНИМАЦИЯЛАР
+       ------------------------------------------------------------- */
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ui-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    /* 1. Интерактивті спотлайт (Interactive Cursor Spotlight on Cards) */
+    .ui-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(
+        550px circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+        rgba(0, 178, 254, 0.12),
+        transparent 45%
+      );
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .ui-card:hover::before {
+      opacity: 1;
+    }
+
+    .hover-lift {
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hover-lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 30px -8px rgba(0, 86, 179, 0.15);
+    }
+
+    /* 2. Кибер-Лазерлік Сканерлеу (Cyber Laser Scan Effect) */
+    .laser-scan-container {
+      position: relative;
+      overflow: hidden;
+    }
+    .laser-beam {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(0, 178, 254, 0.3) 15%, 
+        #00b2fe 40%, 
+        #ffffff 50%, 
+        #00b2fe 60%, 
+        rgba(0, 178, 254, 0.3) 85%, 
+        transparent 100%
+      );
+      box-shadow: 0 0 15px 4px rgba(0, 178, 254, 0.8), 0 0 35px 8px rgba(0, 86, 179, 0.45);
+      z-index: 25;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .laser-beam.active {
+      animation: laserSweep 1.6s ease-in-out infinite alternate;
+      opacity: 1;
+    }
+    .laser-glow-curtain {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 178, 254, 0.08) 0%, rgba(0, 86, 179, 0.02) 100%);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 24;
+      transition: opacity 0.3s ease;
+    }
+    .laser-glow-curtain.active {
+      opacity: 1;
+    }
+    @keyframes laserSweep {
+      0% { top: 2%; opacity: 0.85; }
+      50% { top: 96%; opacity: 1; }
+      100% { top: 2%; opacity: 0.85; }
+    }
+
+    /* 3. Түймелердің металл/гало жылтылы (Shimmer effect) */
+    .shimmer-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .shimmer-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 220%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.28) 50%,
+        transparent 65%
+      );
+      transform: rotate(25deg);
+      animation: shimmerSweep 4.5s infinite ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes shimmerSweep {
+      0% { transform: translateX(-120%) rotate(25deg); }
+      30%, 100% { transform: translateX(120%) rotate(25deg); }
+    }
+
+    /* 4. Карточкалардың салтанатты пайда болу анимациясы (Theme & Load Stagger) */
+    .card-animate-in {
+      animation: cardEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes cardEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* 5. Кесте қатарларының толқын тәрізді шығуы (Row Cascade) */
+    .row-fade-in {
+      animation: rowEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes rowEntrance {
+      0% {
+        opacity: 0;
+        transform: translateX(-14px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* 6. Дөңгелек спидометрдің импульстік толқыны (Sonar Pulse Waves) */
+    .pulse-ring-emerald {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.65);
+      animation: sonarWaveEmerald 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes sonarWaveEmerald {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.65); }
+      70% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .pulse-ring-blue {
+      box-shadow: 0 0 0 0 rgba(0, 178, 254, 0.65);
+      animation: sonarWaveBlue 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes sonarWaveBlue {
+      0% { box-shadow: 0 0 0 0 rgba(0, 178, 254, 0.65); }
+      70% { box-shadow: 0 0 0 20px rgba(0, 178, 254, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 178, 254, 0); }
+    }
+    .pulse-ring-amber {
+      box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.65);
+      animation: sonarWaveAmber 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes sonarWaveAmber {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.65); }
+      70% { box-shadow: 0 0 0 20px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+    .pulse-ring-orange {
+      box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.65);
+      animation: sonarWaveOrange 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes sonarWaveOrange {
+      0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.65); }
+      70% { box-shadow: 0 0 0 20px rgba(249, 115, 22, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+    }
+    .pulse-ring-rose {
+      box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.65);
+      animation: sonarWaveRose 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes sonarWaveRose {
+      0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.65); }
+      70% { box-shadow: 0 0 0 20px rgba(244, 63, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+    }
+
+    /* 7. Enterprise Кибер-Радар айналымы (Cyber Radar Scan) */
+    .radar-sweep-disc {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0.75rem;
+    }
+    .radar-sweep-disc::after {
+      content: '';
+      position: absolute;
+      inset: -20%;
+      background: conic-gradient(from 0deg, rgba(0, 240, 255, 0.4) 0deg, rgba(0, 102, 255, 0.05) 60deg, transparent 90deg, transparent 360deg);
+      border-radius: 50%;
+      animation: radarSpin 3.2s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes radarSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* 8. Конфетти кенебі (Celebration Canvas) */
+    #celebrationCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* 9. Сандардың жаңару поп-эффекті (Number Bounce) */
+    .num-pop {
+      animation: numberPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes numberPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.18); color: #00b2fe; }
+      100% { transform: scale(1); }
+    }
+
+    /* Аврора сфералары */
+    .soft-aurora {
+      display: none;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .aurora-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+    .aurora-orb-1 {
+      top: -100px;
+      right: 10%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(0, 178, 254, 0.28) 0%, rgba(0, 86, 179, 0.12) 60%, transparent 70%);
+      animation: floatOrb1 16s ease-in-out infinite alternate;
+    }
+    .aurora-orb-2 {
+      top: 35%;
+      left: -80px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 86, 179, 0.22) 0%, rgba(99, 102, 241, 0.12) 60%, transparent 70%);
+      animation: floatOrb2 20s ease-in-out infinite alternate;
+    }
+    .aurora-orb-3 {
+      bottom: -100px;
+      right: 25%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+      animation: floatOrb1 18s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes floatOrb1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(70px, 50px) scale(1.15); }
+    }
+    @keyframes floatOrb2 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-60px, -40px) scale(1.1); }
+    }
+
+    .gauge-progress {
+      transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* -------------------------------------------------------------
+       5-ДЕҢГЕЙЛІ ЭКРАНДЫҚ АНИМАЦИЯЛАР (5-TIER SPLASH OVERLAYS)
+       ------------------------------------------------------------- */
+    /* Grade A: 90 - 100 (Изумруд) */
+    .splash-tier-a #splashBackdropGlow {
+      background: radial-gradient(circle at center, rgba(16, 185, 129, 0.28) 0%, rgba(16, 185, 129, 0.08) 50%, transparent 75%);
+    }
+    .splash-tier-a #splashCard {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(16, 185, 129, 0.45);
+      box-shadow: 0 25px 60px -15px rgba(16, 185, 129, 0.4), 0 0 35px rgba(16, 185, 129, 0.25);
+    }
+    .splash-tier-a #splashIconBg {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.5);
+    }
+    .splash-tier-a #splashPulseRing { background-color: #10b981; }
+    .splash-tier-a #splashBadge {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #a7f3d0;
+    }
+    .splash-tier-a #splashTitle { color: #064e3b; }
+    .splash-tier-a #splashProgressBar { background-color: #10b981; }
+
+    /* Grade B: 80 - 89 (Сәтбаев Көк & Циан) */
+    .splash-tier-b #splashBackdropGlow {
+      background: radial-gradient(circle at center, rgba(0, 86, 179, 0.28) 0%, rgba(0, 178, 254, 0.1) 50%, transparent 75%);
+    }
+    .splash-tier-b #splashCard {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(0, 178, 254, 0.45);
+      box-shadow: 0 25px 60px -15px rgba(0, 86, 179, 0.4), 0 0 35px rgba(0, 178, 254, 0.25);
+    }
+    .splash-tier-b #splashIconBg {
+      background: linear-gradient(135deg, #0056b3 0%, #00b2fe 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(0, 86, 179, 0.5);
+    }
+    .splash-tier-b #splashPulseRing { background-color: #00b2fe; }
+    .splash-tier-b #splashBadge {
+      background: #eff6ff;
+      color: #1e40af;
+      border-color: #bfdbfe;
+    }
+    .splash-tier-b #splashTitle { color: #1e3a8a; }
+    .splash-tier-b #splashProgressBar { background-color: #0056b3; }
+
+    /* Grade C: 70 - 79 (Янтарлы алтын) */
+    .splash-tier-c #splashBackdropGlow {
+      background: radial-gradient(circle at center, rgba(245, 158, 11, 0.28) 0%, rgba(245, 158, 11, 0.08) 50%, transparent 75%);
+    }
+    .splash-tier-c #splashCard {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(245, 158, 11, 0.45);
+      box-shadow: 0 25px 60px -15px rgba(245, 158, 11, 0.4), 0 0 35px rgba(245, 158, 11, 0.25);
+    }
+    .splash-tier-c #splashIconBg {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.5);
+    }
+    .splash-tier-c #splashPulseRing { background-color: #f59e0b; }
+    .splash-tier-c #splashBadge {
+      background: #fffbeb;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+    .splash-tier-c #splashTitle { color: #78350f; }
+    .splash-tier-c #splashProgressBar { background-color: #f59e0b; }
+
+    /* Grade D: 60 - 69 (Оранжевый / Коралл) */
+    .splash-tier-d #splashBackdropGlow {
+      background: radial-gradient(circle at center, rgba(249, 115, 22, 0.3) 0%, rgba(249, 115, 22, 0.1) 50%, transparent 75%);
+    }
+    .splash-tier-d #splashCard {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(249, 115, 22, 0.5);
+      box-shadow: 0 25px 60px -15px rgba(249, 115, 22, 0.45), 0 0 35px rgba(249, 115, 22, 0.3);
+    }
+    .splash-tier-d #splashIconBg {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.5);
+    }
+    .splash-tier-d #splashPulseRing { background-color: #f97316; }
+    .splash-tier-d #splashBadge {
+      background: #fff7ed;
+      color: #9a3412;
+      border-color: #fed7aa;
+    }
+    .splash-tier-d #splashTitle { color: #7c2d12; }
+    .splash-tier-d #splashProgressBar { background-color: #f97316; }
+
+    /* Grade F: 0 - 59 (Рубинді қызыл SOC Alert) */
+    .splash-tier-f #splashBackdropGlow {
+      background: radial-gradient(circle at center, rgba(239, 68, 68, 0.35) 0%, rgba(220, 38, 38, 0.12) 50%, transparent 75%);
+    }
+    .splash-tier-f #splashCard {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(239, 68, 68, 0.55);
+      box-shadow: 0 25px 60px -15px rgba(239, 68, 68, 0.5), 0 0 40px rgba(239, 68, 68, 0.35);
+      animation: splashShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    .splash-tier-f #splashIconBg {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.6);
+    }
+    .splash-tier-f #splashPulseRing { background-color: #ef4444; }
+    .splash-tier-f #splashBadge {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+    .splash-tier-f #splashTitle { color: #7f1d1d; }
+    .splash-tier-f #splashProgressBar { background-color: #ef4444; }
+
+    @keyframes splashShake {
+      10%, 90% { transform: translate3d(-1px, 0, 0) scale(1); }
+      20%, 80% { transform: translate3d(2px, 0, 0) scale(1); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0) scale(1); }
+      40%, 60% { transform: translate3d(4px, 0, 0) scale(1); }
+    }
+
+    body[data-theme="enterprise"] #splashCard {
+      background: rgba(11, 26, 56, 0.96) !important;
+      color: #f8fafc !important;
+    }
+    body[data-theme="enterprise"] #splashTitle {
+      color: #f8fafc !important;
+    }
+    body[data-theme="enterprise"] #splashDesc {
+      color: #94a3b8 !important;
+    }
+
+    pre::-webkit-scrollbar {
+      height: 6px;
+    }
+    pre::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 9999px;
+    }
+    pre::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 9999px;
+    }
+    pre::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body data-theme="portal">
 
-  <!-- Жоғарғы навигация -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="h-10 w-10 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
-          <i class="fa-solid fa-shield-halved text-xl text-white"></i>
-        </div>
-        <div>
-          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            CloudSec Auditor
-            <span class="text-xs px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30 font-medium">CSPM + IaC</span>
-          </h1>
-          <p class="text-xs text-slate-400">Бұлттық осалдықтар мен конфигурациялық ауытқуларды (Drift) талдау жүйесі</p>
+  <canvas id="celebrationCanvas"></canvas>
+
+  <!-- =============================================================
+       КИНЕМАТОГРАФИЯЛЫҚ 5-ДЕҢГЕЙЛІ ЭКРАНДЫҚ АНИМАЦИЯ (SCORE SPLASH OVERLAY)
+       ============================================================= -->
+  <div id="scoreSplashOverlay" class="fixed inset-0 z-50 pointer-events-none invisible flex items-center justify-center opacity-0 transition-all duration-400">
+    <div id="splashBackdropGlow" class="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500"></div>
+    
+    <div id="splashCard" class="relative z-10 pointer-events-none transform scale-75 opacity-0 transition-all duration-400 max-w-sm sm:max-w-md w-full mx-4 rounded-3xl p-6 sm:p-8 text-center shadow-2xl border backdrop-blur-2xl cursor-pointer" onclick="closeScoreSplash()">
+      <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      
+      <div class="relative w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+        <div id="splashPulseRing" class="absolute inset-0 rounded-full animate-ping opacity-30"></div>
+        <div id="splashIconBg" class="relative w-20 h-20 rounded-2xl flex items-center justify-center text-3xl shadow-lg transition-transform duration-300 transform hover:scale-110">
+          <i id="splashIcon" class="fa-solid fa-shield-halved"></i>
         </div>
       </div>
-      <div class="flex items-center space-x-3">
-        <a href="/docs" target="_blank" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-code"></i> Swagger API
-        </a>
-        <a href="/api/v1/report/html" target="_blank" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-file-lines"></i> HTML Есеп
-        </a>
+      
+      <div class="inline-block px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase mb-2 border shadow-sm font-mono" id="splashBadge">
+        Grade: A • 100 / 100
+      </div>
+      <h3 id="splashTitle" class="text-xl font-black mb-1.5 tracking-tight">
+        Мінсіз қорғалған!
+      </h3>
+      <p id="splashDesc" class="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
+        CIS AWS Foundations Benchmark талаптары толық орындалған. Ешқандай қауіп жоқ.
+      </p>
+
+      <div class="w-full bg-slate-200/60 h-1 rounded-full mt-5 overflow-hidden">
+        <div id="splashProgressBar" class="h-full rounded-full transition-all duration-3000 ease-linear" style="width: 100%;"></div>
       </div>
     </div>
-  </header>
+  </div>
 
-  <!-- Негізгі контейнер -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  <div class="soft-aurora">
+    <div class="aurora-orb aurora-orb-1"></div>
+    <div class="aurora-orb aurora-orb-2"></div>
+    <div class="aurora-orb aurora-orb-3"></div>
+  </div>
 
-    <!-- Сканерлеуді басқару панелі -->
-    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-      <h2 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-sliders text-sky-400"></i> Сканерлеу параметрлерін баптау
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div>
-          <label for="regionInput" class="block text-xs font-medium text-slate-400 mb-1">AWS Аймағы (Region)</label>
-          <input type="text" id="regionInput" value="us-east-1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
+  <!-- =============================================================
+       ENTERPRISE САЙДБАР (ТЕК ENTERPRISE РЕЖИМІНДЕ СОЛ ЖАҚТА ШЫҒАДЫ)
+       ============================================================= -->
+  <aside id="socSidebar" class="hidden w-64 shrink-0 bg-[#071328] border-r border-blue-900/40 text-slate-200 flex-col justify-between sticky top-0 h-screen z-40 p-4 transition-all">
+    <div class="space-y-6">
+      <!-- Логотип және Бренд -->
+      <div class="flex items-center space-x-3 pb-4 border-b border-blue-900/40">
+        <div class="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 radar-sweep-disc">
+          <svg class="h-6 w-6 text-white relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
         </div>
         <div>
-          <label for="endpointInput" class="block text-xs font-medium text-slate-400 mb-1">Эмулятор URL (LocalStack / Moto)</label>
-          <input type="text" id="endpointInput" placeholder="Мысалы: http://localhost:4566" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
-        </div>
-        <div>
-          <label for="iacPathInput" class="block text-xs font-medium text-slate-400 mb-1">Сервердегі IaC папка жолы (міндетті емес)</label>
-          <input type="text" id="iacPathInput" placeholder="Мысалы: ./terraform/" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
+          <div class="font-extrabold text-sm tracking-tight text-white leading-tight">SATBAYEV SOC</div>
+          <div class="text-[11px] text-cyan-400 font-mono">Cyber Command Center</div>
         </div>
       </div>
 
-      <!-- Terraform кодын тікелей енгізу аймағы -->
-      <div class="mb-4">
-        <label for="iacContentInput" class="block text-xs font-medium text-slate-400 mb-1 flex justify-between">
-          <span>Terraform кодын тікелей тексеру (HCL / .tf code)</span>
-          <span class="text-sky-400 cursor-pointer hover:underline" onclick="loadSampleTerraform()">[ Осал код мысалын қайта жүктеу ]</span>
-        </label>
-        <textarea id="iacContentInput" rows="5" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-sky-500">resource "aws_security_group" "vulnerable_sg" {
+      <!-- Сайдбар Навигация Мәзірі -->
+      <nav class="space-y-1 text-xs">
+        <a href="#statsSection" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-blue-600/30 text-cyan-300 font-bold border border-cyan-500/30">
+          <i class="fa-solid fa-chart-line w-4 text-center"></i> <span>Бақылау тақтасы</span>
+        </a>
+        <a href="#boxControls" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition">
+          <i class="fa-solid fa-sliders w-4 text-center text-blue-400"></i> <span>CIS Сканер</span>
+        </a>
+        <a href="#boxTable" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition">
+          <i class="fa-solid fa-triangle-exclamation w-4 text-center text-amber-400"></i> <span>Drift мониторинг</span>
+        </a>
+        <a href="/api/v1/report/html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition">
+          <i class="fa-solid fa-file-shield w-4 text-center text-emerald-400"></i> <span>HTML Есеп</span>
+        </a>
+        <a href="/docs" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition">
+          <i class="fa-solid fa-code w-4 text-center text-indigo-400"></i> <span>Swagger API</span>
+        </a>
+      </nav>
+
+      <!-- Телеметрия мәртебесі -->
+      <div class="bg-slate-900/80 rounded-xl p-3 border border-blue-900/50 text-[11px] space-y-1 font-mono">
+        <div class="text-slate-400 flex items-center justify-between">
+          <span>Engine:</span> <strong class="text-cyan-400">v2.0.0</strong>
+        </div>
+        <div class="text-slate-400 flex items-center justify-between">
+          <span>CIS Benchmark:</span> <strong class="text-emerald-400">v1.4.0</strong>
+        </div>
+        <div class="text-slate-400 flex items-center justify-between">
+          <span>Статус:</span> <span class="text-emerald-400 flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span> ONLINE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Төменгі дизайн ауыстырғыш -->
+    <div class="pt-4 border-t border-blue-900/40 text-xs">
+      <div class="text-[11px] text-slate-400 mb-2 font-semibold">Лейаутты таңдау:</div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <button onclick="setTheme('portal')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-center">Портал</button>
+        <button onclick="setTheme('glass')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-center">Glass</button>
+        <button onclick="setTheme('bento')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-center">Bento</button>
+        <button onclick="setTheme('enterprise')" class="p-1.5 rounded-lg bg-cyan-500 text-slate-950 text-[11px] font-bold text-center">Enterprise</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =============================================================
+       НЕГІЗГІ ҚОСЫМША КОНТЕЙНЕРІ
+       ============================================================= -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- ENTERPRISE ТӨРІНДЕГІ ЖОҒАРҒЫ СТАТУС-ЖОЛАҚ -->
+    <div id="enterpriseTopBar" class="hidden bg-[#071328] border-b border-blue-900/40 px-6 py-2.5 items-center justify-between text-xs text-slate-300">
+      <div class="flex items-center gap-2">
+        <span class="text-cyan-400 font-bold font-mono">SOC AUDIT CONSOLE</span>
+        <span class="text-slate-500">&bull;</span>
+        <span class="text-slate-400">AWS Cloud Security Posture Management & Drift Analyzer</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="loadDemoPreset('clean')" class="text-[11px] px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+          <i class="fa-solid fa-shield-check mr-1"></i> Қорғалған (100)
+        </button>
+        <button onclick="loadDemoPreset('vulnerable')" class="text-[11px] px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
+          <i class="fa-solid fa-bug mr-1"></i> Осал сынақ
+        </button>
+      </div>
+    </div>
+
+    <!-- БАС ХЭДЕР (PORTAL, GLASS, BENTO РЕЖИМДЕРІ ҮШІН) -->
+    <header id="mainHeader" class="relative z-30 transition-all duration-300 shadow-md border-b" 
+            style="background: var(--header-bg); color: var(--header-text); border-color: rgba(0,0,0,0.06);">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Сол жақ: Бренд -->
+        <div class="flex items-center space-x-3.5">
+          <div id="headerLogoBox" class="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow-md transition-all">
+            <svg class="h-6 w-6 text-[#0056b3]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="headerBrandTitle" class="text-base sm:text-lg font-black tracking-tight transition-colors">SATBAYEV UNIVERSITY</span>
+              <span id="headerCloudSecBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 border border-white/30 transition-all">
+                CloudSec
+              </span>
+            </div>
+            <p id="headerSubtitle" class="text-xs opacity-90 font-medium transition-colors">Cloud Security Posture Management & Drift Auditor</p>
+          </div>
+        </div>
+
+        <!-- Оң жақ: Дизайн ауыстырғыш & Түймелер -->
+        <div class="flex items-center flex-wrap gap-2.5">
+          
+          <div id="themeSwitcherBox" class="flex items-center p-1 rounded-xl bg-black/15 border border-white/20 text-xs backdrop-blur transition-all">
+            <button onclick="setTheme('portal')" id="btn-theme-portal" 
+                    class="theme-btn px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-white text-blue-900 shadow-sm">
+              <i class="fa-solid fa-building-columns text-[11px]"></i> <span>Портал</span>
+            </button>
+            <button onclick="setTheme('glass')" id="btn-theme-glass" 
+                    class="theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 opacity-80 hover:opacity-100">
+              <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i> <span>Glass</span>
+            </button>
+            <button onclick="setTheme('bento')" id="btn-theme-bento" 
+                    class="theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 opacity-80 hover:opacity-100">
+              <i class="fa-solid fa-table-cells-large text-[11px]"></i> <span>Bento</span>
+            </button>
+            <button onclick="setTheme('enterprise')" id="btn-theme-enterprise" 
+                    class="theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 opacity-80 hover:opacity-100">
+              <i class="fa-solid fa-shield-halved text-[11px]"></i> <span>Enterprise</span>
+            </button>
+          </div>
+
+          <a href="/docs" target="_blank" class="text-xs px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 border border-white/25 transition font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-code"></i> API
+          </a>
+          <a href="/api/v1/report/html" target="_blank" class="text-xs px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-file-lines"></i> HTML Есеп
+          </a>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- =============================================================
+         НЕГІЗГІ ДАШБОРД (ТӨРТ ТҮРЛІ ЛЕЙАУТҚА СӘЙКЕС ОРНАЛАСАТЫН БЛОКТАР)
+         ============================================================= -->
+    <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+      <div id="layoutGrid" class="space-y-6">
+
+        <!-- 1. HERO БЛОК (#boxHero) -->
+        <div id="boxHero" class="ui-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-md" style="background: var(--badge-bg); color: var(--badge-text);">
+                <i class="fa-solid fa-shield-halved mr-1"></i> CIS AWS Foundations Benchmark v1.4.0
+              </span>
+              <span class="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span> Жүйе дайын
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight" style="color: var(--text-main);">
+              Бұлттық инфрақұрылымның қауіпсіздік деңгейін талдау
+            </h2>
+            <p class="text-xs sm:text-sm mt-1 max-w-2xl" style="color: var(--text-sub);">
+              AWS ресурстары мен Terraform кодтарындағы осалдықтарды автоматты тексеру, Drift (кодтан тыс қолмен енгізілген өзгерістерді) табу және 1-шертумен түзету.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button onclick="loadDemoPreset('vulnerable')" class="shimmer-btn text-xs px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold flex items-center gap-1.5 transition shadow-sm">
+              <i class="fa-solid fa-bug"></i> Осал сынақ
+            </button>
+            <button onclick="loadDemoPreset('clean')" class="shimmer-btn text-xs px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 font-bold flex items-center gap-1.5 transition shadow-sm">
+              <i class="fa-solid fa-circle-check"></i> Қорғалған (100)
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. СКАНИРЛЕУ ПАРАМЕТРЛЕРІ МЕН КОД РЕДАКТОРЫ (#boxControls) -->
+        <section id="boxControls" class="ui-card p-6 laser-scan-container">
+          <!-- Кибер Лазер және HUD сканер элементтері -->
+          <div id="laserBeamLine" class="laser-beam"></div>
+          <div id="laserGlowCurtain" class="laser-glow-curtain"></div>
+          <div id="scanHudBanner" class="hidden absolute top-4 right-4 z-30 px-3.5 py-1.5 rounded-full bg-blue-900/95 text-cyan-300 font-mono text-xs flex items-center gap-2.5 border border-cyan-400/60 shadow-2xl backdrop-blur animate-pulse">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+            </span>
+            <span id="scanHudText" class="font-bold tracking-wider">CIS КИБЕР-СКАНЕРЛЕУ ІСКЕ ҚОСЫЛДЫ: 15 ТЕКСЕРУ...</span>
+          </div>
+
+          <div class="flex items-center justify-between mb-4 relative z-10">
+            <h3 class="text-base font-bold flex items-center gap-2.5" style="color: var(--text-main);">
+              <span class="h-8 w-8 rounded-lg flex items-center justify-center text-white shadow-md shadow-blue-500/20" style="background: var(--primary);">
+                <i class="fa-solid fa-sliders text-xs"></i>
+              </span>
+              Сканерлеу параметрлерін баптау
+            </h3>
+            <span class="text-xs px-2.5 py-1 rounded-lg border font-mono" style="background: var(--bg-page); color: var(--text-muted); border-color: var(--card-border);">
+              15 CIS Checks &bull; Engine v2.0
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 relative z-10">
+            <div>
+              <label for="regionInput" class="block text-xs font-semibold mb-1" style="color: var(--text-sub);">
+                AWS Аймағы (Region)
+              </label>
+              <input type="text" id="regionInput" value="us-east-1" 
+                     class="w-full rounded-xl px-3.5 py-2 text-xs font-mono transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--input-border);">
+            </div>
+            <div>
+              <label for="endpointInput" class="block text-xs font-semibold mb-1" style="color: var(--text-sub);">
+                Эмулятор URL (LocalStack)
+              </label>
+              <input type="text" id="endpointInput" placeholder="http://localhost:4566" 
+                     class="w-full rounded-xl px-3.5 py-2 text-xs font-mono transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--input-border);">
+            </div>
+            <div>
+              <label for="iacPathInput" class="block text-xs font-semibold mb-1" style="color: var(--text-sub);">
+                IaC папка жолы
+              </label>
+              <input type="text" id="iacPathInput" placeholder="./terraform_demo/" 
+                     class="w-full rounded-xl px-3.5 py-2 text-xs font-mono transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--input-border);">
+            </div>
+          </div>
+
+          <!-- Terraform кодын тексеру -->
+          <div class="mb-4 relative z-10">
+            <div class="flex items-center justify-between mb-1">
+              <label for="iacContentInput" class="text-xs font-semibold flex items-center gap-1.5" style="color: var(--text-sub);">
+                <i class="fa-solid fa-code text-blue-600"></i> Terraform кодын тікелей тексеру (HCL / .tf)
+              </label>
+              <span class="text-xs font-semibold cursor-pointer hover:underline text-blue-600 transition" onclick="loadSampleTerraform()">
+                [ Осал код мысалын қайта жүктеу ]
+              </span>
+            </div>
+            <textarea id="iacContentInput" rows="5" 
+                      class="w-full rounded-xl p-3.5 text-xs font-mono transition focus:outline-none focus:ring-2 focus:ring-blue-500 leading-relaxed"
+                      style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--input-border);">resource "aws_security_group" "vulnerable_sg" {
   name        = "open-access-sg"
-  description = "Dangerous SG"
+  description = "Dangerous open SSH"
 
   ingress {
     from_port   = 22
@@ -98,120 +1063,496 @@
 }
 
 resource "aws_s3_bucket" "open_bucket" {
-  bucket = "company-public-data"
+  bucket = "satbayev-public-data-test"
   acl    = "public-read"
 }</textarea>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
-        <div class="flex items-center gap-4">
-          <label class="flex items-center gap-2 cursor-pointer text-xs text-amber-300 font-medium bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg">
-            <input type="checkbox" id="demoModeInput" checked class="rounded border-slate-700 bg-slate-950 text-sky-500">
-            <span>Демо режим (AWS бұлты мен Drift-ті эмуляциялау)</span>
-          </label>
-          <span class="text-xs text-slate-400">
-            <i class="fa-solid fa-circle-info text-sky-400"></i> Жүйе бір уақытта AWS бұлтын, Terraform кодын және Drift-ті тексереді.
-          </span>
-        </div>
-        <button id="scanBtn" onclick="executeScan()" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium px-6 py-2.5 rounded-xl shadow-lg shadow-sky-500/25 flex items-center gap-2 transition text-sm">
-          <i class="fa-solid fa-play"></i> <span>Сканерлеуді іске қосу</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Нәтижелердің статистикалық тақтасы (Дашборд) -->
-    <div id="statsSection" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-      <!-- Қауіпсіздік деңгейі -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between sm:col-span-2">
-        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Қауіпсіздік деңгейі</span>
-        <div class="flex items-baseline justify-between mt-2">
-          <div class="text-4xl font-extrabold text-white flex items-baseline gap-1">
-            <span id="scoreValue">0</span>
-            <span class="text-sm font-normal text-slate-500">/ 100</span>
           </div>
-          <span id="gradeBadge" class="text-xl font-bold px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">A</span>
+
+          <!-- Түйме және Демо режим -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t relative z-10" style="border-color: var(--card-border);">
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-bold px-3 py-2 rounded-xl transition bg-amber-50 text-amber-700 border border-amber-200">
+              <input type="checkbox" id="demoModeInput" checked class="rounded accent-blue-600 h-4 w-4">
+              <span><i class="fa-solid fa-bolt mr-1"></i> Демо режим (Эмуляция)</span>
+            </label>
+
+            <button id="scanBtn" onclick="executeScan()" 
+                    class="hover-lift shimmer-btn text-white font-bold px-7 py-3 rounded-xl shadow-lg flex items-center gap-2.5 transition text-sm tracking-wide"
+                    style="background: var(--scan-btn-bg); box-shadow: var(--scan-btn-shadow);">
+              <i class="fa-solid fa-play text-xs"></i> <span>Сканерлеуді іске қосу</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 3. ДАШБОРД ЖӘНЕ СТАТИСТИКА (#statsSection) -->
+        <div id="statsSection" class="space-y-4">
+
+          <div id="boxStatsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+            
+            <!-- Спидометр Картасы -->
+            <div class="ui-card p-5 flex items-center justify-between sm:col-span-2 relative overflow-hidden">
+              <div class="space-y-1 relative z-10">
+                <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-sub);">
+                  Қауіпсіздік индексі (Score)
+                </span>
+                <div class="text-4xl sm:text-5xl font-black flex items-baseline gap-1" style="color: var(--text-main);">
+                  <span id="scoreValue" class="inline-block transition-transform duration-300">100</span>
+                  <span class="text-sm font-normal text-slate-400">/100</span>
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                  <span id="gradeBadge" class="text-sm font-extrabold px-3 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm transition-all duration-300">
+                    Grade: A
+                  </span>
+                  <span id="scoreStatusText" class="text-xs font-semibold text-emerald-600 transition-colors">Мінсіз қауіпсіздік</span>
+                </div>
+              </div>
+
+              <!-- Circular Gauge Progress -->
+              <div id="gaugeContainer" class="relative w-24 h-24 flex items-center justify-center shrink-0 rounded-full transition-all duration-500 pulse-ring-emerald">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="8" fill="transparent" />
+                  <circle id="gaugeCircle" cx="50" cy="50" r="40" stroke="#10b981" stroke-width="8" 
+                          stroke-dasharray="251.2" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" class="gauge-progress" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <i id="gaugeIcon" class="fa-solid fa-shield-halved text-2xl text-emerald-600 transition-transform duration-300"></i>
+                </div>
+              </div>
+            </div>
+
+            <div id="boxStatsCounters" class="contents">
+              <!-- Сыни қауіптер -->
+              <div class="ui-card p-5 flex flex-col justify-between hover-lift border-rose-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-rose-600">Сыни қауіп</span>
+                  <span class="h-6 w-6 rounded-md bg-rose-100 text-rose-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-radiation"></i>
+                  </span>
+                </div>
+                <div class="text-4xl font-black text-rose-600 my-2" id="critCount">0</div>
+                <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                  <span>Салмағы: -10</span>
+                  <span class="text-rose-600 font-bold">Шұғыл</span>
+                </div>
+              </div>
+
+              <!-- Жоғары қауіптер -->
+              <div class="ui-card p-5 flex flex-col justify-between hover-lift border-orange-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Жоғары қауіп</span>
+                  <span class="h-6 w-6 rounded-md bg-orange-100 text-orange-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                  </span>
+                </div>
+                <div class="text-4xl font-black text-orange-600 my-2" id="highCount">0</div>
+                <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                  <span>Салмағы: -7</span>
+                  <span class="text-orange-600 font-bold">Қауіпті</span>
+                </div>
+              </div>
+
+              <!-- Орташа қауіптер -->
+              <div class="ui-card p-5 flex flex-col justify-between hover-lift border-amber-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Орташа қауіп</span>
+                  <span class="h-6 w-6 rounded-md bg-amber-100 text-amber-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                  </span>
+                </div>
+                <div class="text-4xl font-black text-amber-600 my-2" id="medCount">0</div>
+                <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                  <span>Салмағы: -4</span>
+                  <span class="text-amber-600 font-bold">Ескерту</span>
+                </div>
+              </div>
+
+              <!-- Drift (Ауытқулар) -->
+              <div class="ui-card p-5 flex flex-col justify-between hover-lift border-amber-300 bg-amber-50/40">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1">
+                    <i class="fa-solid fa-code-compare"></i> Drift
+                  </span>
+                  <span class="h-6 w-6 rounded-md bg-amber-200 text-amber-800 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-fingerprint"></i>
+                  </span>
+                </div>
+                <div class="text-4xl font-black text-amber-700 my-2" id="driftCount">0</div>
+                <div class="text-[11px] text-amber-800 font-medium">
+                  Кодтан тыс енгізілген
+                </div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
-        <div class="w-full bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
-          <div id="scoreBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-700" style="width: 0"></div>
+
+        <!-- 4. ОСАЛДЫҚТАР МЕН РЕМЕДИАЦИЯ КЕСТЕСІ (#boxTable) -->
+        <section id="boxTable" class="ui-card overflow-hidden shadow-lg">
+          
+          <div class="p-5 border-b flex flex-wrap items-center justify-between gap-4" style="border-color: var(--card-border);">
+            <div>
+              <h3 class="text-base font-bold flex items-center gap-2" style="color: var(--text-main);">
+                <i class="fa-solid fa-shield-virus text-blue-600"></i> Анықталған осалдықтар мен түзету шешімдері
+              </h3>
+              <p class="text-xs mt-0.5" style="color: var(--text-sub);">
+                CIS Benchmark стандарттарына сәйкестік және 1-Click түзету скрипттері
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button onclick="filterTable('ALL')" class="filter-btn text-xs px-3 py-1.5 rounded-lg font-bold transition bg-blue-600 text-white shadow-sm" id="btn-filter-ALL">
+                Барлығы (<span id="totalBadgeCount">0</span>)
+              </button>
+              <button onclick="filterTable('CRITICAL')" class="filter-btn text-xs px-3 py-1.5 rounded-lg font-semibold transition bg-rose-100 text-rose-700 hover:bg-rose-200" id="btn-filter-CRITICAL">
+                Сыни
+              </button>
+              <button onclick="filterTable('HIGH')" class="filter-btn text-xs px-3 py-1.5 rounded-lg font-semibold transition bg-orange-100 text-orange-700 hover:bg-orange-200" id="btn-filter-HIGH">
+                Жоғары
+              </button>
+              <button onclick="filterTable('MEDIUM')" class="filter-btn text-xs px-3 py-1.5 rounded-lg font-semibold transition bg-amber-100 text-amber-700 hover:bg-amber-200" id="btn-filter-MEDIUM">
+                Орташа
+              </button>
+              <button onclick="filterTable('DRIFT')" class="filter-btn text-xs px-3 py-1.5 rounded-lg font-semibold transition bg-amber-200 text-amber-900 hover:bg-amber-300" id="btn-filter-DRIFT">
+                ⚠️ Тек Drift
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse" id="findingsTable">
+              <thead>
+                <tr class="text-xs uppercase tracking-wider font-bold border-b" 
+                    style="background: var(--table-header); color: var(--text-sub); border-color: var(--card-border);">
+                  <th class="p-4 w-44">Ереже & Деңгей</th>
+                  <th class="p-4 w-60">Осалдық & Ресурс</th>
+                  <th class="p-4">Сипаттамасы</th>
+                  <th class="p-4 min-w-[340px] max-w-xl">1-Click Түзету шешімі (Remediation)</th>
+                </tr>
+              </thead>
+              <tbody id="findingsBody" class="divide-y text-xs" style="border-color: var(--card-border);">
+                <tr>
+                  <td colspan="4" class="p-8 text-center text-slate-500">
+                    <i class="fa-solid fa-circle-check text-4xl text-emerald-600 block mb-2"></i>
+                    <strong class="text-sm text-slate-800 block">Қауіпсіздік деңгейі мінсіз (100 / 100)!</strong>
+                    <span class="text-xs text-slate-500 mt-1 block">CIS AWS Foundations Benchmark талаптары толық орындалған. Ешқандай осалдық немесе Drift анықталған жоқ.</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+    <!-- ТАЗА РЕСМИ FOOTER -->
+    <footer class="relative z-10 border-t py-5 mt-10 text-center text-xs transition-colors" 
+            style="background: var(--card-bg); color: var(--text-sub); border-color: var(--card-border);">
+      <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div class="flex items-center gap-2 font-semibold">
+          <span class="text-blue-700 font-bold">Satbayev University</span>
+          <span>&bull;</span>
+          <span>Cloud Security Operations Platform</span>
+        </div>
+        <div class="text-slate-400">
+          &copy; 2026 Барлық құқықтар қорғалған
         </div>
       </div>
+    </footer>
 
-      <!-- Сыни (Critical) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-        <span class="text-xs font-medium text-rose-400 uppercase tracking-wider">Сыни қауіптер</span>
-        <div class="text-3xl font-black text-rose-400 mt-2" id="critCount">0</div>
-        <span class="text-xs text-slate-500 mt-1">10 балл салмақ</span>
-      </div>
+  </div>
 
-      <!-- Жоғары (High) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-        <span class="text-xs font-medium text-orange-400 uppercase tracking-wider">Жоғары қауіптер</span>
-        <div class="text-3xl font-black text-orange-400 mt-2" id="highCount">0</div>
-        <span class="text-xs text-slate-500 mt-1">7 балл салмақ</span>
-      </div>
-
-      <!-- Орташа (Medium) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-        <span class="text-xs font-medium text-amber-400 uppercase tracking-wider">Орташа қауіптер</span>
-        <div class="text-3xl font-black text-amber-400 mt-2" id="medCount">0</div>
-        <span class="text-xs text-slate-500 mt-1">4 балл салмақ</span>
-      </div>
-
-      <!-- Drift (Ауытқулар) -->
-      <div class="bg-slate-900 border border-yellow-500/30 bg-yellow-500/5 rounded-2xl p-5 flex flex-col justify-between">
-        <span class="text-xs font-medium text-yellow-400 uppercase tracking-wider flex items-center gap-1">
-          <i class="fa-solid fa-triangle-exclamation"></i> Drift (Ауытқу)
-        </span>
-        <div class="text-3xl font-black text-yellow-400 mt-2" id="driftCount">0</div>
-        <span class="text-xs text-slate-400 mt-1">Қолмен енгізілген</span>
-      </div>
-    </div>
-
-    <!-- Табылған осалдықтар кестесі -->
-    <section id="tableSection" class="hidden bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-      <div class="p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h3 class="text-base font-semibold text-white flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-sky-400"></i> Анықталған қауіптер мен түзету шешімдері
-          </h3>
-          <p class="text-xs text-slate-400 mt-0.5">Барлық табылған осалдықтар мен автоматты түзету скрипттері</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="filterTable('ALL')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-medium active filter-btn">Барлығы</button>
-          <button onclick="filterTable('CRITICAL')" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 font-medium filter-btn">Сыни</button>
-          <button onclick="filterTable('HIGH')" class="text-xs px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 font-medium filter-btn">Жоғары</button>
-          <button onclick="filterTable('DRIFT')" class="text-xs px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-400 font-medium filter-btn">⚠️ Drift</button>
-        </div>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="findingsTable">
-          <thead>
-            <tr class="bg-slate-950/60 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
-              <th class="p-4">Ереже & Деңгей</th>
-              <th class="p-4">Осалдық & Ресурс</th>
-              <th class="p-4">Сипаттамасы</th>
-              <th class="p-4">1-Click Түзету шешімі (Remediation)</th>
-            </tr>
-          </thead>
-          <tbody id="findingsBody" class="divide-y divide-slate-800 text-sm">
-            <!-- Деректер JS арқылы салынады -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="border-t border-slate-800 bg-slate-950 py-4 text-center text-xs text-slate-500">
-    Дипломдық жоба: Бұлттық инфрақұрылымның қауіпсіздік сканері &bull; CIS Benchmarks &bull; FastAPI + React
-  </footer>
-
+  <!-- =============================================================
+       JAVASCRIPT ЛОГИКАСЫ
+       ============================================================= -->
   <script>
+    // 1. ДИЗАЙН ЖӘНЕ ЛЕЙАУТТЫ АУЫСТЫРУ
+    const THEMES = ['portal', 'glass', 'bento', 'enterprise'];
+
+    function setTheme(name) {
+      if (!THEMES.includes(name)) return;
+      document.body.dataset.theme = name;
+
+      THEMES.forEach(t => {
+        const btn = document.getElementById(`btn-theme-${t}`);
+        if (!btn) return;
+        if (t === name) {
+          if (name === 'bento') {
+            btn.className = "theme-btn px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-blue-600 text-white shadow-md";
+          } else if (name === 'enterprise') {
+            btn.className = "theme-btn px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-cyan-400 text-slate-950 shadow-md shadow-cyan-500/30";
+          } else {
+            btn.className = "theme-btn px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-white text-blue-900 shadow-sm";
+          }
+        } else {
+          if (name === 'bento') {
+            btn.className = "theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+          } else {
+            btn.className = "theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 opacity-80 hover:opacity-100 text-white";
+          }
+        }
+      });
+
+      // Карточкалардың салтанатты толқынды кіруі (Stagger Entrance)
+      const cards = document.querySelectorAll('#layoutGrid > div, #layoutGrid > section');
+      cards.forEach((c, idx) => {
+        c.classList.remove('card-animate-in');
+        void c.offsetWidth;
+        c.style.animationDelay = `${idx * 0.06}s`;
+        c.classList.add('card-animate-in');
+      });
+
+      localStorage.setItem('satbayev_active_theme', name);
+    }
+
+    // Интерактивті спотлайтты қосу (Interactive Cursor Glow)
+    function initCardSpotlights() {
+      document.querySelectorAll('.ui-card').forEach(card => {
+        if (card._spotlightReady) return;
+        card._spotlightReady = true;
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.setProperty('--mouse-x', '-999px');
+          card.style.setProperty('--mouse-y', '-999px');
+        });
+      });
+    }
+
+    // Сандарды тегіс айналдыру (Smooth Rolling Counter with Bounce)
+    function animateValue(id, start, end, duration = 800) {
+      const obj = document.getElementById(id);
+      if (!obj) return;
+      if (start === end) {
+        obj.innerText = end;
+        return;
+      }
+      obj.classList.remove('num-pop');
+      void obj.offsetWidth;
+      obj.classList.add('num-pop');
+
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(ease * (end - start) + start);
+        obj.innerText = current;
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          obj.innerText = end;
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    // Конфетти салюты (Celebration Particle Burst)
+    function launchCelebration() {
+      const canvas = document.getElementById('celebrationCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#0056b3', '#00b2fe', '#10b981', '#38bdf8', '#fbbf24', '#ffffff'];
+
+      const gauge = document.getElementById('gaugeContainer');
+      let originX = window.innerWidth / 2;
+      let originY = window.innerHeight / 3;
+      if (gauge) {
+        const rect = gauge.getBoundingClientRect();
+        originX = rect.left + rect.width / 2;
+        originY = rect.top + rect.height / 2;
+      }
+
+      for (let i = 0; i < 90; i++) {
+        const angle = (Math.PI * 2 * i) / 90 + (Math.random() - 0.5) * 0.5;
+        const speed = Math.random() * 9 + 4;
+        particles.push({
+          x: originX,
+          y: originY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 3.5,
+          size: Math.random() * 7 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 14,
+          shape: Math.random() > 0.4 ? 'rect' : 'circle'
+        });
+      }
+
+      let animationFrame;
+      const startTime = Date.now();
+
+      function render() {
+        const elapsed = Date.now() - startTime;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.22;
+          p.vx *= 0.985;
+          p.rotation += p.rotationSpeed;
+          p.alpha -= 0.013;
+
+          if (p.alpha > 0) {
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            if (p.shape === 'rect') {
+              ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.5);
+            } else {
+              ctx.beginPath();
+              ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          }
+        });
+
+        if (elapsed < 2400) {
+          animationFrame = requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          cancelAnimationFrame(animationFrame);
+        }
+      }
+
+      render();
+    }
+
+    // 5-ДЕҢГЕЙЛІ ЭКРАНДЫҚ АНИМАЦИЯЛАРДЫ БАСҚАРУ (5-TIER SPLASH CONTROLLER)
+    let splashTimeout = null;
+
+    function triggerScoreSplash(score, grade) {
+      const overlay = document.getElementById('scoreSplashOverlay');
+      const glow = document.getElementById('splashBackdropGlow');
+      const card = document.getElementById('splashCard');
+      const badge = document.getElementById('splashBadge');
+      const title = document.getElementById('splashTitle');
+      const desc = document.getElementById('splashDesc');
+      const icon = document.getElementById('splashIcon');
+      const prog = document.getElementById('splashProgressBar');
+
+      if (!overlay || !card) return;
+
+      if (splashTimeout) clearTimeout(splashTimeout);
+
+      // Алдыңғы деңгей кластарын тазалау
+      overlay.className = "fixed inset-0 z-50 pointer-events-none flex items-center justify-center opacity-0 transition-opacity duration-400";
+      
+      let tierClass = "splash-tier-a";
+      let iconClass = "fa-solid fa-shield-halved";
+      let badgeText = `Grade: ${grade} • ${score} / 100`;
+      let titleText = "Мінсіз қорғалған!";
+      let descText = "CIS AWS Foundations Benchmark талаптары толық орындалған. Ешқандай осалдық жоқ.";
+
+      if (score >= 90) {
+        tierClass = "splash-tier-a";
+        iconClass = "fa-solid fa-shield-halved";
+        titleText = (score === 100) ? "Мінсіз қорғаныс (100 / 100)!" : "Үздік деңгей (Grade A)!";
+        descText = "Инфрақұрылым толық қауіпсіз. CIS Benchmark стандарты мінсіз орындалды.";
+      } else if (score >= 80) {
+        tierClass = "splash-tier-b";
+        iconClass = "fa-solid fa-cloud-arrow-up";
+        titleText = "Жақсы қауіпсіздік деңгейі (Grade B)";
+        descText = "Бұлттық жүйе сенімді қорғалған. Болмашы (Low/Medium) ескертулер ғана бар.";
+      } else if (score >= 70) {
+        tierClass = "splash-tier-c";
+        iconClass = "fa-solid fa-triangle-exclamation";
+        titleText = "Орташа қауіп деңгейі (Grade C)";
+        descText = "Назар аударыңыз: High немесе бірнеше Medium деңгейлі осалдық табылды.";
+      } else if (score >= 60) {
+        tierClass = "splash-tier-d";
+        iconClass = "fa-solid fa-circle-exclamation";
+        titleText = "Қауіп деңгейі жоғары (Grade D)!";
+        descText = "Инфрақұрылым шабуылдарға осал. 1-Click түзету шешімдерін дереу орындаңыз.";
+      } else {
+        tierClass = "splash-tier-f";
+        iconClass = "fa-solid fa-radiation";
+        titleText = "ШҰҒЫЛ ҚАУІП АНЫҚТАЛДЫ (Grade F)!";
+        descText = "Сыни осалдықтар: 0.0.0.0/0 ашық SSH, Root MFA жоқ немесе ашық S3 бакеттері бар!";
+      }
+
+      overlay.classList.add(tierClass);
+      icon.className = iconClass;
+      badge.innerText = badgeText;
+      title.innerText = titleText;
+      desc.innerText = descText;
+
+      // Экранға шығару (Фон шертулерге кедергі жасамайды, тек карточка ғана шертіледі)
+      overlay.className = "fixed inset-0 z-50 pointer-events-none flex items-center justify-center transition-all duration-400 " + tierClass;
+      overlay.classList.remove('invisible', 'opacity-0');
+      overlay.classList.add('visible', 'opacity-100');
+      if (glow) {
+        glow.classList.remove('opacity-0');
+        glow.classList.add('opacity-100');
+      }
+
+      card.classList.remove('pointer-events-none', 'scale-75', 'opacity-0');
+      card.classList.add('pointer-events-auto', 'scale-100', 'opacity-100');
+
+      // Прогресс жолағының анимациясы (3.2 секунд)
+      if (prog) {
+        prog.style.transition = 'none';
+        prog.style.width = '100%';
+        setTimeout(() => {
+          prog.style.transition = 'width 3.2s linear';
+          prog.style.width = '0%';
+        }, 30);
+      }
+
+      // 3.2 секундтан соң автоматты жабылу
+      splashTimeout = setTimeout(() => {
+        closeScoreSplash();
+      }, 3200);
+    }
+
+    function closeScoreSplash() {
+      const overlay = document.getElementById('scoreSplashOverlay');
+      const glow = document.getElementById('splashBackdropGlow');
+      const card = document.getElementById('splashCard');
+      if (!overlay || !card) return;
+
+      overlay.classList.remove('opacity-100');
+      overlay.classList.add('opacity-0');
+      card.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+      card.classList.add('opacity-0', 'pointer-events-none', 'scale-75');
+      if (glow) {
+        glow.classList.remove('opacity-100');
+        glow.classList.add('opacity-0');
+      }
+      setTimeout(() => {
+        if (overlay.classList.contains('opacity-0')) {
+          overlay.classList.add('invisible');
+        }
+      }, 400);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('satbayev_active_theme');
+      if (saved && THEMES.includes(saved)) {
+        setTheme(saved);
+      }
+      initCardSpotlights();
+    });
+
+    // 2. ДЕМО ПРЕЗЕТТЕРІ
     function loadSampleTerraform() {
       document.getElementById('iacContentInput').value = `resource "aws_security_group" "vulnerable_sg" {
   name        = "open-access-sg"
-  description = "Dangerous SG"
+  description = "Dangerous open SSH"
 
   ingress {
     from_port   = 22
@@ -222,15 +1563,68 @@ resource "aws_s3_bucket" "open_bucket" {
 }
 
 resource "aws_s3_bucket" "open_bucket" {
-  bucket = "company-public-data"
+  bucket = "satbayev-public-data-test"
   acl    = "public-read"
 }`;
     }
 
-    async function executeScan() {
+    function loadDemoPreset(type) {
+      document.getElementById('demoModeInput').checked = true;
+      if (type === 'vulnerable') {
+        loadSampleTerraform();
+        executeScan('vulnerable');
+      } else {
+        document.getElementById('iacContentInput').value = `# Қорғалған Terraform инфрақұрылымы (CIS Benchmark Compliant)
+resource "aws_s3_bucket" "secure_bucket" {
+  bucket = "satbayev-secure-audit-logs"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "enc" {
+  bucket = aws_s3_bucket.secure_bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "secure_pab" {
+  bucket = aws_s3_bucket.secure_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}`;
+        executeScan('clean');
+      }
+    }
+
+    // 3. СКАНЕРЛЕУ ОРЫНДАУ ЖӘНЕ КИБЕР-ЛАЗЕР АНИМАЦИЯСЫ
+    async function executeScan(presetType = null) {
       const btn = document.getElementById('scanBtn');
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Сканерлеу жүруде...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sm"></i> <span>Сканерлеу жүруде...</span>`;
+
+      // Кибер-лазерлік сәуле мен HUD сканерді іске қосу
+      const laser = document.getElementById('laserBeamLine');
+      const curtain = document.getElementById('laserGlowCurtain');
+      const hud = document.getElementById('scanHudBanner');
+      const hudText = document.getElementById('scanHudText');
+      if (laser) laser.classList.add('active');
+      if (curtain) curtain.classList.add('active');
+      if (hud) hud.classList.remove('hidden');
+
+      let scanStep = 0;
+      const scanMessages = [
+        "CIS 1.x: IAM & Root есептік жазбалары тексерілуде...",
+        "CIS 2.x: S3 Storage & Шифрлау саясаттары тексерілуде...",
+        "CIS 5.x: Security Groups & Drift аудит орындалуда..."
+      ];
+      const scanInterval = setInterval(() => {
+        scanStep = (scanStep + 1) % scanMessages.length;
+        if (hudText) hudText.innerText = scanMessages[scanStep];
+      }, 320);
 
       const payload = {
         provider: "aws",
@@ -238,7 +1632,8 @@ resource "aws_s3_bucket" "open_bucket" {
         endpoint_url: document.getElementById('endpointInput').value || null,
         iac_path: document.getElementById('iacPathInput').value || null,
         iac_content: document.getElementById('iacContentInput').value || null,
-        demo_mode: document.getElementById('demoModeInput').checked
+        demo_mode: document.getElementById('demoModeInput').checked,
+        demo_preset: presetType
       };
 
       try {
@@ -248,126 +1643,230 @@ resource "aws_s3_bucket" "open_bucket" {
           body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-          alert('Сканерлеу кезінде серверден қате келді');
-          return;
-        }
-
+        if (!response.ok) throw new Error('API қате қайтарды');
         const data = await response.json();
         renderDashboard(data);
       } catch (err) {
-        alert("Қате орын алды: " + err.message);
+        console.warn("API байланысы табылмады, демонстрациялық деректер көрсетіледі");
+        renderFallbackDemoData(presetType);
       } finally {
+        clearInterval(scanInterval);
+        setTimeout(() => {
+          if (laser) laser.classList.remove('active');
+          if (curtain) curtain.classList.remove('active');
+          if (hud) hud.classList.add('hidden');
+        }, 450);
+
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-play"></i> <span>Сканерлеуді іске қосу</span>`;
+        btn.innerHTML = `<i class="fa-solid fa-play text-xs"></i> <span>Сканерлеуді іске қосу</span>`;
       }
     }
 
+    // 4. ДАШБОРДТЫ ЖАҢАРТУ ЖӘНЕ АНИМАЦИЯЛАРДЫ БАСҚАРУ
     function renderDashboard(data) {
-      document.getElementById('statsSection').classList.remove('hidden');
-      document.getElementById('tableSection').classList.remove('hidden');
+      animateScore(data.score);
 
-      // Ұпай мен көрсеткіштер
-      document.getElementById('scoreValue').innerText = data.score;
       const gradeBadge = document.getElementById('gradeBadge');
-      gradeBadge.innerText = data.grade;
+      gradeBadge.innerText = `Grade: ${data.grade}`;
+      
+      const statusText = document.getElementById('scoreStatusText');
+      const gaugeCircle = document.getElementById('gaugeCircle');
+      const gaugeIcon = document.getElementById('gaugeIcon');
 
-      const scoreBar = document.getElementById('scoreBar');
-      scoreBar.style.width = data.score + '%';
-
-      if (data.score >= 80) {
-        gradeBadge.className = "text-xl font-bold px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-        scoreBar.className = "bg-emerald-500 h-2 rounded-full transition-all duration-700";
+      if (data.score >= 90) {
+        gradeBadge.className = "text-sm font-extrabold px-3 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm transition-all duration-300";
+        statusText.innerText = (data.score === 100) ? "Мінсіз қауіпсіздік (100 / 100)" : "Қорғалған (Grade A)";
+        statusText.className = "text-xs font-semibold text-emerald-600";
+        gaugeCircle.setAttribute('stroke', '#10b981');
+        gaugeIcon.className = "fa-solid fa-shield-halved text-2xl text-emerald-600";
+      } else if (data.score >= 80) {
+        gradeBadge.className = "text-sm font-extrabold px-3 py-0.5 rounded-lg bg-blue-100 text-blue-800 border border-blue-300 shadow-sm transition-all duration-300";
+        statusText.innerText = "Жақсы деңгей (Grade B)";
+        statusText.className = "text-xs font-semibold text-blue-600";
+        gaugeCircle.setAttribute('stroke', '#0062bd');
+        gaugeIcon.className = "fa-solid fa-cloud-arrow-up text-2xl text-blue-600";
+      } else if (data.score >= 70) {
+        gradeBadge.className = "text-sm font-extrabold px-3 py-0.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-300 shadow-sm transition-all duration-300";
+        statusText.innerText = "Орташа қауіп (Grade C)";
+        statusText.className = "text-xs font-semibold text-amber-600";
+        gaugeCircle.setAttribute('stroke', '#f59e0b');
+        gaugeIcon.className = "fa-solid fa-triangle-exclamation text-2xl text-amber-600";
       } else if (data.score >= 60) {
-        gradeBadge.className = "text-xl font-bold px-3 py-1 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30";
-        scoreBar.className = "bg-amber-500 h-2 rounded-full transition-all duration-700";
+        gradeBadge.className = "text-sm font-extrabold px-3 py-0.5 rounded-lg bg-orange-100 text-orange-800 border border-orange-300 shadow-sm transition-all duration-300";
+        statusText.innerText = "Қауіп деңгейі жоғары (Grade D)";
+        statusText.className = "text-xs font-semibold text-orange-600";
+        gaugeCircle.setAttribute('stroke', '#f97316');
+        gaugeIcon.className = "fa-solid fa-circle-exclamation text-2xl text-orange-600";
       } else {
-        gradeBadge.className = "text-xl font-bold px-3 py-1 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30";
-        scoreBar.className = "bg-rose-500 h-2 rounded-full transition-all duration-700";
+        gradeBadge.className = "text-sm font-extrabold px-3 py-0.5 rounded-lg bg-rose-100 text-rose-800 border border-rose-300 shadow-sm transition-all duration-300";
+        statusText.innerText = "Шұғыл сыни қауіп! (Grade F)";
+        statusText.className = "text-xs font-semibold text-rose-600";
+        gaugeCircle.setAttribute('stroke', '#ef4444');
+        gaugeIcon.className = "fa-solid fa-radiation text-2xl text-rose-600";
       }
 
-      document.getElementById('critCount').innerText = data.severity_counts.critical || 0;
-      document.getElementById('highCount').innerText = data.severity_counts.high || 0;
-      document.getElementById('medCount').innerText = data.severity_counts.medium || 0;
-      document.getElementById('driftCount').innerText = data.drift_count || 0;
+      // 5-деңгейлі кинематографиялық экрандық оверлейді шақыру
+      setTimeout(() => {
+        triggerScoreSplash(data.score, data.grade);
+      }, 350);
 
-      // Кестені толтыру
+      // Барлық метрикаларды тегіс айналдыру (Smooth Counter Animation)
+      const critEl = document.getElementById('critCount');
+      const highEl = document.getElementById('highCount');
+      const medEl = document.getElementById('medCount');
+      const driftEl = document.getElementById('driftCount');
+      const totalEl = document.getElementById('totalBadgeCount');
+
+      animateValue('critCount', parseInt(critEl.innerText) || 0, data.severity_counts.critical || 0, 750);
+      animateValue('highCount', parseInt(highEl.innerText) || 0, data.severity_counts.high || 0, 750);
+      animateValue('medCount', parseInt(medEl.innerText) || 0, data.severity_counts.medium || 0, 750);
+      animateValue('driftCount', parseInt(driftEl.innerText) || 0, data.drift_count || 0, 750);
+      animateValue('totalBadgeCount', parseInt(totalEl.innerText) || 0, data.findings ? data.findings.length : 0, 750);
+
       const tbody = document.getElementById('findingsBody');
       tbody.innerHTML = '';
 
-      if (data.findings.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500">Қауіпсіздік деңгейі мінсіз! Ешқандай осалдық табылған жоқ.</td></tr>`;
+      if (!data.findings || data.findings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500 row-fade-in">
+          <i class="fa-solid fa-circle-check text-4xl text-emerald-600 block mb-2"></i>
+          <strong class="text-sm text-slate-800 block">Қауіпсіздік деңгейі мінсіз (100 / 100)!</strong>
+          <span class="text-xs text-slate-500 mt-1 block">CIS AWS Foundations Benchmark талаптары толық орындалған. Ешқандай осалдық немесе Drift анықталған жоқ.</span>
+        </td></tr>`;
         return;
       }
 
-      data.findings.forEach(f => {
-        const sevColors = {
-          CRITICAL: "bg-rose-500/20 text-rose-400 border-rose-500/30",
-          HIGH: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-          MEDIUM: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-          LOW: "bg-sky-500/20 text-sky-400 border-sky-500/30"
-        };
-        const colorClass = sevColors[f.severity] || "bg-slate-800 text-slate-300";
-
-        let fixHtml = '';
-        if (f.remediation_cli || f.remediation_terraform) {
-          fixHtml = `
-            <details class="mt-2 bg-slate-950 border border-slate-800 rounded-lg p-2.5">
-              <summary class="cursor-pointer text-xs font-semibold text-sky-400 select-none">
-                <i class="fa-solid fa-wrench"></i> Авто-түзету кодын көру
-              </summary>
-              <div class="mt-2 space-y-2 text-xs">
-                ${f.remediation_cli ? `
-                  <div>
-                    <span class="text-slate-400 font-bold block mb-1">AWS CLI пәрмені:</span>
-                    <pre class="bg-black/60 p-2 rounded text-sky-300 overflow-x-auto text-[11px]"><code>${f.remediation_cli}</code></pre>
-                  </div>
-                ` : ''}
-                ${f.remediation_terraform ? `
-                  <div>
-                    <span class="text-slate-400 font-bold block mb-1">Terraform коды:</span>
-                    <pre class="bg-black/60 p-2 rounded text-emerald-400 overflow-x-auto text-[11px]"><code>${f.remediation_terraform}</code></pre>
-                  </div>
-                ` : ''}
-              </div>
-            </details>
-          `;
-        }
-
+      data.findings.forEach((f, idx) => {
         const tr = document.createElement('tr');
-        tr.className = "finding-item hover:bg-slate-800/40 transition";
+        tr.className = "finding-item row-fade-in transition hover:bg-slate-50";
+        tr.style.animationDelay = `${idx * 0.08}s`;
         tr.dataset.severity = f.severity;
         tr.dataset.drift = f.is_drift ? "true" : "false";
 
+        let sevClass = "bg-blue-100 text-blue-800 border-blue-200";
+        if (f.severity === 'CRITICAL') sevClass = "bg-rose-100 text-rose-800 border-rose-200";
+        else if (f.severity === 'HIGH') sevClass = "bg-orange-100 text-orange-800 border-orange-200";
+        else if (f.severity === 'MEDIUM') sevClass = "bg-amber-100 text-amber-800 border-amber-200";
+
+        let fixContent = '';
+        if (f.remediation_cli || f.remediation_terraform) {
+          fixContent = `
+            <div class="mt-2.5 space-y-2.5">
+              ${f.remediation_cli ? `
+                <div class="rounded-xl p-3.5 shadow-sm" style="background: var(--code-bg);">
+                  <div class="flex items-center justify-between text-xs mb-1.5 font-mono text-slate-400">
+                    <span class="font-semibold flex items-center gap-1.5">
+                      <i class="fa-solid fa-terminal text-blue-400"></i> AWS CLI пәрмені:
+                    </span>
+                    <button onclick="copyToClipboard(this)" class="hover:text-white hover:bg-slate-700 px-2.5 py-1 rounded-md bg-slate-800 text-[11px] text-slate-200 font-semibold transition flex items-center gap-1 shadow-sm">
+                      <i class="fa-regular fa-copy text-[10px]"></i> <span>Көшіру</span>
+                    </button>
+                  </div>
+                  <pre class="overflow-x-auto text-xs sm:text-[13px] font-mono leading-relaxed pt-1.5 pb-3.5 px-1" style="color: var(--code-text);"><code>${escapeHtml(f.remediation_cli)}</code></pre>
+                </div>
+              ` : ''}
+
+              ${f.remediation_terraform ? `
+                <div class="rounded-xl p-3.5 shadow-sm" style="background: var(--code-bg);">
+                  <div class="flex items-center justify-between text-xs mb-1.5 font-mono text-slate-400">
+                    <span class="font-semibold flex items-center gap-1.5">
+                      <i class="fa-solid fa-cubes text-emerald-400"></i> Terraform коды:
+                    </span>
+                    <button onclick="copyToClipboard(this)" class="hover:text-white hover:bg-slate-700 px-2.5 py-1 rounded-md bg-slate-800 text-[11px] text-slate-200 font-semibold transition flex items-center gap-1 shadow-sm">
+                      <i class="fa-regular fa-copy text-[10px]"></i> <span>Көшіру</span>
+                    </button>
+                  </div>
+                  <pre class="overflow-x-auto text-xs sm:text-[13px] font-mono text-emerald-400 leading-relaxed pt-1.5 pb-3.5 px-1"><code>${escapeHtml(f.remediation_terraform)}</code></pre>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
+
         tr.innerHTML = `
           <td class="p-4 align-top w-48">
-            <span class="font-mono font-bold text-sky-400">${f.rule_id}</span>
-            <div class="mt-1 flex flex-wrap gap-1">
-              <span class="text-xs px-2 py-0.5 rounded border font-semibold ${colorClass}">${f.severity_display}</span>
-              ${f.is_drift ? '<span class="text-xs px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 font-bold">⚠️ DRIFT</span>' : ''}
+            <span class="font-mono font-bold text-blue-600 text-xs">${f.rule_id}</span>
+            <div class="mt-1.5 flex flex-wrap gap-1">
+              <span class="text-[11px] px-2 py-0.5 rounded border font-bold ${sevClass}">
+                ${f.severity_display}
+              </span>
+              ${f.is_drift ? `
+                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300 font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-fingerprint"></i> DRIFT
+                </span>
+              ` : ''}
             </div>
-            <div class="text-[11px] text-slate-500 mt-2">${f.standard}</div>
+            <div class="text-[10px] text-slate-400 mt-2 font-mono">${f.standard || 'CIS Benchmark'}</div>
           </td>
-          <td class="p-4 align-top w-64">
-            <strong class="text-slate-200 block">${f.title}</strong>
-            <span class="font-mono text-xs text-slate-400 bg-slate-950 px-2 py-0.5 rounded mt-1 inline-block break-all border border-slate-800">${f.resource}</span>
+
+          <td class="p-4 align-top w-60">
+            <div class="font-bold text-xs" style="color: var(--text-main);">${f.title}</div>
+            <span class="font-mono text-[11px] px-2 py-0.5 rounded mt-1.5 inline-block break-all border bg-slate-50 text-slate-600 border-slate-200">
+              ${f.resource}
+            </span>
           </td>
-          <td class="p-4 align-top max-w-sm text-slate-300 text-xs">
-            <p class="whitespace-pre-wrap">${f.description}</p>
+
+          <td class="p-4 align-top text-xs" style="color: var(--text-sub);">
+            <p class="leading-relaxed">${f.description}</p>
           </td>
-          <td class="p-4 align-top max-w-md">
-            <div class="text-xs text-emerald-300 bg-emerald-950/20 border-l-2 border-emerald-500 p-2 rounded">
-              <strong class="block text-emerald-400 mb-0.5">Ұсыныс:</strong>
-              ${f.recommendation}
+
+          <td class="p-4 align-top min-w-[340px] max-w-xl">
+            <div class="text-xs p-3 rounded-xl border-l-4 bg-emerald-50 border-l-emerald-500 text-slate-800 shadow-sm">
+              <div class="font-bold text-emerald-700 text-xs mb-1">
+                <i class="fa-solid fa-lightbulb mr-1"></i> Ремедиация ұсынысы:
+              </div>
+              <p class="text-xs leading-relaxed text-slate-700">${f.recommendation}</p>
             </div>
-            ${fixHtml}
+            ${fixContent}
           </td>
         `;
+
         tbody.appendChild(tr);
       });
+      initCardSpotlights();
     }
 
+    // 5. ҰПАЙДЫ АНИМАЦИЯЛАУ ЖӘНЕ СОНАР/САЛЮТ ЭФФЕКТІСІ
+    function animateScore(targetScore) {
+      const el = document.getElementById('scoreValue');
+      const circle = document.getElementById('gaugeCircle');
+      const gaugeBox = document.getElementById('gaugeContainer');
+      const maxCircumference = 2 * Math.PI * 40; // 251.2
+      
+      const currentVal = parseInt(el.innerText) || 0;
+      animateValue('scoreValue', currentVal, targetScore, 900);
+
+      const offset = maxCircumference - (targetScore / 100) * maxCircumference;
+      circle.style.strokeDashoffset = offset;
+
+      if (gaugeBox) {
+        gaugeBox.classList.remove('pulse-ring-emerald', 'pulse-ring-blue', 'pulse-ring-amber', 'pulse-ring-orange', 'pulse-ring-rose');
+        if (targetScore >= 90) {
+          gaugeBox.classList.add('pulse-ring-emerald');
+          if (targetScore === 100) {
+            setTimeout(launchCelebration, 300);
+          }
+        } else if (targetScore >= 80) {
+          gaugeBox.classList.add('pulse-ring-blue');
+        } else if (targetScore >= 70) {
+          gaugeBox.classList.add('pulse-ring-amber');
+        } else if (targetScore >= 60) {
+          gaugeBox.classList.add('pulse-ring-orange');
+        } else {
+          gaugeBox.classList.add('pulse-ring-rose');
+        }
+      }
+    }
+
+    // 6. СҮЗГІЛЕУ
     function filterTable(type) {
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+      });
+      const activeBtn = document.getElementById(`btn-filter-${type}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+      }
+
       const rows = document.querySelectorAll('.finding-item');
       rows.forEach(r => {
         if (type === 'ALL') {
@@ -378,6 +1877,124 @@ resource "aws_s3_bucket" "open_bucket" {
           r.style.display = (r.dataset.severity === type) ? '' : 'none';
         }
       });
+    }
+
+    // 7. КӨШІРУ УТИЛИТАСЫ
+    function copyToClipboard(btn) {
+      const pre = btn.closest('div').nextElementSibling;
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText.trim()).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = "Көшірілді! ✓";
+        btn.classList.add('text-emerald-400');
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.classList.remove('text-emerald-400');
+        }, 2000);
+      });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // 8. ДЕМО МӘЛІМЕТТЕР
+    function renderFallbackDemoData(presetType = null) {
+      if (presetType === 'clean') {
+        const cleanData = {
+          score: 100,
+          grade: "A",
+          total_checks: 15,
+          findings_count: 0,
+          drift_count: 0,
+          severity_counts: {
+            critical: 0,
+            high: 0,
+            medium: 0,
+            low: 0
+          },
+          findings: []
+        };
+        renderDashboard(cleanData);
+        return;
+      }
+
+      const demoData = {
+        score: 54,
+        grade: "F",
+        total_checks: 15,
+        findings_count: 5,
+        drift_count: 2,
+        severity_counts: {
+          critical: 2,
+          high: 2,
+          medium: 1,
+          low: 0
+        },
+        findings: [
+          {
+            rule_id: "IAM-001",
+            title: "Root қолданушысында MFA белсендірілмеген",
+            resource: "arn:aws:iam::123456789012:root",
+            severity: "CRITICAL",
+            severity_display: "СЫНИ",
+            description: "CIS 1.5 стандарты бойынша түбірлік (root) есептік жазба міндетті түрде көпфакторлы аутентификациямен (MFA) қорғалуы қажет.",
+            recommendation: "AWS Management Console арқылы root пайдаланушысына виртуалды немесе аппараттық MFA құрылғысын дереу байланыстырыңыз.",
+            standard: "CIS AWS Foundations 1.5",
+            remediation_cli: "aws iam enable-mfa-device --user-name root --serial-number arn:aws:iam::123456789012:mfa/root-mfa",
+            is_drift: false
+          },
+          {
+            rule_id: "EC2-001",
+            title: "Барлық әлемге ашық SSH порты (0.0.0.0/0)",
+            resource: "sg-0a1b2c3d4e5f6g7h8 (open-access-sg)",
+            severity: "CRITICAL",
+            severity_display: "СЫНИ",
+            description: "Security Group 22-порты (SSH) кез келген сыртқы IP-мекенжайдан қосылуға ашық. Бұл бұлтқа шабуыл жасау қаупін тудырады.",
+            recommendation: "SSH рұқсатын тек сенімді ішкі корпоративтік IP немесе VPN желісімен шектеңіз.",
+            standard: "CIS AWS Foundations 5.2",
+            remediation_cli: "aws ec2 revoke-security-group-ingress --group-id sg-0a1b2c3d4e5f6g7h8 --protocol tcp --port 22 --cidr 0.0.0.0/0",
+            remediation_terraform: `ingress {
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["10.0.0.0/16"] # Корпоративтік желі
+}`,
+            is_drift: true
+          },
+          {
+            rule_id: "S3-001",
+            title: "S3 бакеті жалпыға ашық (Public Read Access)",
+            resource: "satbayev-public-data-test",
+            severity: "HIGH",
+            severity_display: "ЖОҒАРЫ",
+            description: "Бакетте Public Read рұқсаты орнатылған немесе S3 Block Public Access механизмі ажыратылған.",
+            recommendation: "S3 Block Public Access параметрлерін іске қосыңыз және ACL рұқсатын жеке күйге ауыстырыңыз.",
+            standard: "CIS AWS Foundations 2.1.5",
+            remediation_cli: "aws s3api put-public-access-block --bucket satbayev-public-data-test --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+            is_drift: true
+          },
+          {
+            rule_id: "CT-001",
+            title: "CloudTrail аудит журналы барлық аймақтарда қосылмаған",
+            resource: "arn:aws:cloudtrail:us-east-1:123456789012:trail/main-audit",
+            severity: "HIGH",
+            severity_display: "ЖОҒАРЫ",
+            description: "Аудит жүйесі барлық белсенді аймақтардағы қауіпсіздік оқиғаларын толық тіркемейді.",
+            recommendation: "CloudTrail параметрін 'IsMultiRegionTrail=true' етіп баптаңыз.",
+            standard: "CIS AWS Foundations 3.1",
+            remediation_cli: "aws cloudtrail update-trail --name main-audit --is-multi-region-trail",
+            is_drift: false
+          }
+        ]
+      };
+      renderDashboard(demoData);
     }
   </script>
 </body>
