@@ -282,7 +282,6 @@ def main() -> int:
             # 1. IaC статикалық қауіптерін табу (Shift-Left)
             iac_findings = scan_terraform(args.iac)
             all_findings.extend(iac_findings)
-            total_checks += 4
 
             # 2. Drift Detection: бұлттық табыстар мен Terraform ресурстарын салыстыру
             iac_resources = get_declared_resources(args.iac)
@@ -297,8 +296,10 @@ def main() -> int:
         min_threshold = SEVERITY_ORDER[min_sev_enum]
         filtered_findings = [f for f in all_findings if SEVERITY_ORDER[f.severity] >= min_threshold]
 
-    # Қауіпсіздік бағасын есептеу
-    score, grade = calculate_score(filtered_findings, total_checks)
+    # Қауіпсіздік бағасын есептеу:
+    # Базалардың шатасуын (metric dilution) болдырмау үшін Live Cloud ұпайы CIS 15 ережесі (C=168) бойынша есептеледі.
+    cloud_only_findings = [f for f in filtered_findings if not f.rule_id.startswith("IAC-")]
+    score, grade = calculate_score(cloud_only_findings, total_checks=15)
 
     region_display = f"all-regions ({len(getattr(session, 'target_regions', []))})" if args.all_regions else args.region
 

@@ -100,7 +100,7 @@ def correlate_and_detect_drift(
                 if pub != "true":
                     _mark_as_drift(
                         finding,
-                        reason="Terraform кодында дерекқор жабық (publicly_accessible=false), бірақ бұлтта қолмен интернетке ашылған!"
+                        reason="Terraform кодында дерекқор жабық (publicly_accessible=false), бірақ бұлт консолінде (ClickOps) қолмен интернетке ашылған!"
                     )
                     drift_detected_count += 1
             else:
@@ -156,14 +156,14 @@ def _check_s3_drift(b_res: TerraformResource, rule_id: str) -> Tuple[bool, str]:
         # Public Access Block
         acl = str(b_res.config.get("acl", "private")).strip('"\'')
         if acl not in ("public-read", "public-read-write"):
-            return True, "Terraform кодында бакет қауіпсіз (private) деп жазылған, бірақ бұлтта қолмен жария қолжетімділік ашылған!"
+            return True, "Terraform кодында бакет қауіпсіз (private) деп жазылған, бірақ бұлт консолінде (ClickOps) қолмен жария қолжетімділік ашылған!"
         return False, ""
 
     elif rule_id == "S3-002":
         # Әдепкі шифрлау: кодта бапталған ба?
         sse = b_res.config.get("server_side_encryption_configuration")
         if sse is not None:
-            return True, "Terraform кодында шифрлау (SSE) қосылған, бірақ бұлтта ол қолмен өшірілген!"
+            return True, "Terraform кодында шифрлау (SSE) қосылған, бірақ бұлт консолінде (ClickOps) ол қолмен өшірілген!"
         # Егер кодтың өзінде шифрлау жазылмаса, бұл ауытқу емес, кодтағы қате
         return False, ""
 
@@ -171,7 +171,7 @@ def _check_s3_drift(b_res: TerraformResource, rule_id: str) -> Tuple[bool, str]:
         # Нұсқалау (versioning)
         v_conf = b_res.config.get("versioning", {})
         if isinstance(v_conf, dict) and str(v_conf.get("enabled", "")).lower() == "true":
-            return True, "Terraform кодында нұсқалау (versioning) қосылған, бірақ бұлтта ол өшірілген!"
+            return True, "Terraform кодында нұсқалау (versioning) қосылған, бірақ бұлт консолінде (ClickOps) ол өшірілген!"
         return False, ""
 
     return False, ""

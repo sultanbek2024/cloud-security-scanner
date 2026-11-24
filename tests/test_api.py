@@ -57,6 +57,13 @@ def test_run_scan_with_iac_content():
     assert "score" in data
     assert "findings" in data
     assert len(data["findings"]) >= 1
-
     rule_ids = [f["rule_id"] for f in data["findings"]]
     assert "IAC-EC2-001" in rule_ids
+
+
+def test_download_pdf_endpoint():
+    response = client.get("/api/v1/report/pdf")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert "attachment" in response.headers["content-disposition"]
+    assert len(response.content) > 1000

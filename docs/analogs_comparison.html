@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Бұлттық қауіпсіздік жүйелерінің аналогтарын талдау | Сәтбаев Университеті</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+    .satbayev-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.25rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 86, 179, 0.08), 0 4px 6px -2px rgba(0, 86, 179, 0.04);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .satbayev-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 35px -8px rgba(0, 86, 179, 0.16);
+    }
+    .img-zoom {
+      transition: transform 0.4s ease;
+    }
+    .img-zoom:hover {
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8">
+
+  <!-- ЖОҒАРҒЫ ХЭДЕР -->
+  <header class="max-w-6xl mx-auto mb-8 satbayev-card p-6 bg-gradient-to-r from-[#0056b3] to-[#00438c] text-white">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-4">
+        <div class="h-12 w-12 rounded-2xl bg-white flex items-center justify-center shadow-lg">
+          <svg class="h-7 w-7 text-[#0056b3]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <span class="text-xs uppercase font-bold tracking-wider text-cyan-300 font-mono">Сәтбаев Университеті &bull; Ақпараттық қауіпсіздік</span>
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight">Бұлттық қауіпсіздік сканерлерінің аналогтарын талдау (+ / -)</h1>
+          <p class="text-xs text-blue-100 mt-0.5">Дипломдық жұмыс: «CloudSec Auditor — AWS CSPM, IaC және Drift талдау кешені»</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-xs font-bold transition flex items-center gap-1.5 backdrop-blur border border-white/20">
+          <i class="fa-solid fa-print"></i> Басып шығару (Print)
+        </button>
+        <a href="http://localhost:8000" class="px-4 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+          <i class="fa-solid fa-gauge-high"></i> Басқару тақтасына өту
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- НЕГІЗГІ САЛЫСТЫРУ КЕСТЕСІ -->
+  <section class="max-w-6xl mx-auto mb-12 satbayev-card overflow-hidden">
+    <div class="p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-table-list text-blue-600"></i> Аналитикалық салыстыру кестесі (Дипломның 3.1-бөлімі)
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Зерттелген халықаралық аналогтар мен біздің жүйеміздің функционалдық айырмашылықтары</p>
+      </div>
+      <span class="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-bold border border-blue-200">
+        CIS AWS Benchmark v1.4.0
+      </span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs text-left">
+        <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+          <tr>
+            <th class="p-4">Құрал / Жүйе</th>
+            <th class="p-4">Құрал түрі</th>
+            <th class="p-4 text-center">Live Cloud Аудиті</th>
+            <th class="p-4 text-center">IaC (Terraform) талдауы</th>
+            <th class="p-4 text-center">Drift анықтау</th>
+            <th class="p-4 text-center">Бағалау моделі (0-100)</th>
+            <th class="p-4 text-center">Қазақ тіліндегі UI</th>
+            <th class="p-4 text-center">1-Click Түзету</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-4 font-bold text-slate-900 flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-slate-400"></span> <strong>Prowler</strong>
+            </td>
+            <td class="p-4 text-slate-600">Cloud Security Tool</td>
+            <td class="p-4 text-center text-emerald-600 font-bold">Иә (300+ чек)</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-amber-600">Pass/Fail %</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-amber-600">Шектеулі</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-4 font-bold text-slate-900 flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-slate-400"></span> <strong>ScoutSuite</strong>
+            </td>
+            <td class="p-4 text-slate-600">Multi-Cloud Audit</td>
+            <td class="p-4 text-center text-emerald-600 font-bold">Иә (AWS, GCP, Az)</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-4 font-bold text-slate-900 flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-slate-400"></span> <strong>AWS Security Hub</strong>
+            </td>
+            <td class="p-4 text-slate-600">Native Cloud CSPM</td>
+            <td class="p-4 text-center text-emerald-600 font-bold">Иә (FSBP, CIS)</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-amber-600">Сызықтық %</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-amber-600">SSM қажет</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-4 font-bold text-slate-900 flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-slate-400"></span> <strong>Checkov</strong>
+            </td>
+            <td class="p-4 text-slate-600">IaC Scanner</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-emerald-600 font-bold">Иә (TF, K8s)</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-emerald-600 font-bold">Кодтық</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-4 font-bold text-slate-900 flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-slate-400"></span> <strong>driftctl</strong>
+            </td>
+            <td class="p-4 text-slate-600">Drift Detector</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-emerald-600 font-bold">Иә (State)</td>
+            <td class="p-4 text-center text-emerald-600 font-bold">Иә</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+            <td class="p-4 text-center text-rose-500 font-bold">Жоқ</td>
+          </tr>
+          <!-- БІЗДІҢ ЖҮЙЕ -->
+          <tr class="bg-blue-50/80 font-bold border-t-2 border-blue-500 text-slate-950">
+            <td class="p-4 text-blue-900 flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-blue-600 animate-ping"></span>
+              <strong>CloudSec Auditor (Біздің жүйе)</strong>
+            </td>
+            <td class="p-4 text-blue-900 font-semibold">Интеграцияланған CSPM</td>
+            <td class="p-4 text-center text-emerald-700">Иә (15 сыни чек)</td>
+            <td class="p-4 text-center text-emerald-700">Иә (HCL2 негізінде)</td>
+            <td class="p-4 text-center text-emerald-700">Иә (Live vs IaC)</td>
+            <td class="p-4 text-center text-emerald-700">Иә (Кемімелі C=168)</td>
+            <td class="p-4 text-center text-emerald-700">Толық қазақша</td>
+            <td class="p-4 text-center text-emerald-700">Иә (CLI & TF)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- АНАЛОГТАРДЫҢ СКРИНШОТТАРЫ МЕН ДЕТАЛЬДЫ КАРТОЧКАЛАРЫ -->
+  <main class="max-w-6xl mx-auto space-y-12">
+
+    <!-- 1. PROWLER -->
+    <article class="satbayev-card p-6 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b">
+        <div>
+          <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-slate-100 text-slate-700">1-Аналог &bull; GitHub 11k+ Stars</span>
+          <h3 class="text-xl font-black text-slate-900 mt-1">Prowler (Prowler Open Source Security)</h3>
+          <p class="text-xs text-slate-500">Сілтемесі: <a href="https://github.com/prowler-cloud/prowler" target="_blank" class="text-blue-600 hover:underline">github.com/prowler-cloud/prowler</a></p>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-800 font-bold border">Тек Live Cloud аудиті</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="space-y-4">
+          <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-900">
+            <div class="bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300 flex items-center justify-between">
+              <span>prowler_overview_dashboard.png</span>
+              <span class="text-emerald-400">Нақты скриншот</span>
+            </div>
+            <img src="analogs/01_prowler_dashboard.png" alt="Prowler Dashboard" class="w-full h-auto img-zoom">
+          </div>
+          <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-900">
+            <div class="bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300 flex items-center justify-between">
+              <span>prowler_risk_pipeline.png</span>
+              <span class="text-blue-400">Тәуекелдер тақтасы</span>
+            </div>
+            <img src="analogs/01_prowler_risk_pipeline.png" alt="Prowler Risk Pipeline" class="w-full h-auto img-zoom">
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <h4 class="font-bold text-xs text-emerald-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-plus text-emerald-600"></i> Артықшылықтары (+):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li>AWS, Azure, GCP бұлттарын кешенді тексеруге арналған 300-ден аса ережелер жинағы.</li>
+              <li>CIS AWS Foundations Benchmark стандарттарының толық сәйкестігі.</li>
+              <li>Қауымдастық пен индустриядағы ең көп танылған де-факто стандарт.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+            <h4 class="font-bold text-xs text-rose-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-minus text-rose-600"></i> Кемшіліктері (-):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li><strong>Shift-Left жоқ:</strong> Terraform кодын (.tf файлдарын) оқымайды, тек бұлтқа шығып қойған қателерді көреді.</li>
+              <li><strong>Drift Detection жоқ:</strong> Кодтан тыс консоль арқылы жасалған өзгерістерді таба алмайды.</li>
+              <li><strong>Қазақ тілі жоқ:</strong> Тек ағылшын тілінде, мемлекеттік секторға локализацияланбаған.</li>
+              <li><strong>Бағалау қарапайым:</strong> Тек орындалған чектердің пайызын көрсетеді, сыни қауіпті салмақтамайды.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2. SCOUTSUITE -->
+    <article class="satbayev-card p-6 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b">
+        <div>
+          <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-slate-100 text-slate-700">2-Аналог &bull; NCC Group</span>
+          <h3 class="text-xl font-black text-slate-900 mt-1">ScoutSuite (Multi-Cloud Auditing Tool)</h3>
+          <p class="text-xs text-slate-500">Сілтемесі: <a href="https://github.com/nccgroup/ScoutSuite" target="_blank" class="text-blue-600 hover:underline">github.com/nccgroup/ScoutSuite</a></p>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-800 font-bold border">Офлайн HTML Есеп</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-900">
+          <div class="bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300 flex items-center justify-between">
+            <span>scoutsuite_html_report.png</span>
+            <span class="text-emerald-400">Нақты скриншот</span>
+          </div>
+          <img src="analogs/02_scoutsuite_dashboard.png" alt="ScoutSuite Dashboard" class="w-full h-auto img-zoom">
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <h4 class="font-bold text-xs text-emerald-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-plus text-emerald-600"></i> Артықшылықтары (+):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li>Сканерлеу аяқталған соң өте түсінікті автономды HTML-есеп парақшасын құрастырады.</li>
+              <li>AWS сервистері бойынша (EC2, S3, IAM, RDS) жіктелген навигация мәзірі бар.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+            <h4 class="font-bold text-xs text-rose-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-minus text-rose-600"></i> Кемшіліктері (-):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li><strong>Жобаның дамуы баяу:</strong> CIS Benchmark-тің жаңа v3.0 нұсқаларына сирек жаңартылады.</li>
+              <li><strong>Скоринг (Баға) жоқ:</strong> Инфрақұрылымның 0-100 балл аралығындағы бірыңғай бағасы жоқ, тек сандарды тізіп береді.</li>
+              <li><strong>Түзету үлгілері жоқ:</strong> Табылған осалдықты 1-Click түзетуге арналған дайын CLI немесе Terraform кодтары берілмейді.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3. AWS SECURITY HUB -->
+    <article class="satbayev-card p-6 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b">
+        <div>
+          <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-slate-100 text-slate-700">3-Аналог &bull; AWS Native CSPM</span>
+          <h3 class="text-xl font-black text-slate-900 mt-1">AWS Security Hub</h3>
+          <p class="text-xs text-slate-500">Сілтемесі: <a href="https://aws.amazon.com/security-hub/" target="_blank" class="text-blue-600 hover:underline">aws.amazon.com/security-hub</a></p>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-800 font-bold border">Бұлттық Меншікті Панель</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-900">
+          <div class="bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300 flex items-center justify-between">
+            <span>aws_security_hub_console.png</span>
+            <span class="text-emerald-400">Нақты скриншот</span>
+          </div>
+          <img src="analogs/03_aws_security_hub_dashboard.png" alt="AWS Security Hub" class="w-full h-auto img-zoom">
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <h4 class="font-bold text-xs text-emerald-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-plus text-emerald-600"></i> Артықшылықтары (+):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li>AWS-тің ішіне орнатылған, 24/7 үздіксіз фондық тексеру жүргізеді.</li>
+              <li>AWS Organizations арқылы көптеген аккаунттарды бір орталықтан басқарады.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+            <h4 class="font-bold text-xs text-rose-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-minus text-rose-600"></i> Кемшіліктері (-):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li><strong>Өте қымбат:</strong> Әрбір тексерілетін ресурс пен оқиға үшін ай сайын қымбат төлем талап етеді.</li>
+              <li><strong>Тек өндірісте ғана істейді:</strong> Бағдарламашы өз компьютеріндегі Terraform кодын оған дейін тексере алмайды.</li>
+              <li><strong>Қазақ тілі мүлдем жоқ.</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 4. CHECKOV -->
+    <article class="satbayev-card p-6 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b">
+        <div>
+          <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-slate-100 text-slate-700">4-Аналог &bull; Palo Alto Networks / Bridgecrew</span>
+          <h3 class="text-xl font-black text-slate-900 mt-1">Checkov (IaC Static Analysis)</h3>
+          <p class="text-xs text-slate-500">Сілтемесі: <a href="https://www.checkov.io/" target="_blank" class="text-blue-600 hover:underline">checkov.io</a></p>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-800 font-bold border">Тек IaC (Код) Сканері</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="space-y-4">
+          <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-900">
+            <div class="bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300 flex items-center justify-between">
+              <span>checkov_cli_scan.png</span>
+              <span class="text-emerald-400">Нақты скриншот</span>
+            </div>
+            <img src="analogs/04_checkov_cli_scan.png" alt="Checkov CLI Scan" class="w-full h-auto img-zoom">
+          </div>
+          <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-900">
+            <div class="bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300 flex items-center justify-between">
+              <span>checkov_cli_details.png</span>
+              <span class="text-blue-400">Кодтық түзету нақтылауы</span>
+            </div>
+            <img src="analogs/04_checkov_cli_details.png" alt="Checkov CLI Details" class="w-full h-auto img-zoom">
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <h4 class="font-bold text-xs text-emerald-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-plus text-emerald-600"></i> Артықшылықтары (+):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li>Terraform, CloudFormation, Kubernetes кодтарын деплойға дейін (Shift-Left) мінсіз талдайды.</li>
+              <li>CI/CD автоматтандыру конвейерлеріне өте ыңғайлы енгізіледі.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+            <h4 class="font-bold text-xs text-rose-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-minus text-rose-600"></i> Кемшіліктері (-):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li><strong>Нақты бұлтты тексермейді:</strong> Тек файлды тексереді, нақты AWS ішінде не болып жатқанынан хабарсыз.</li>
+              <li><strong>Drift Detection жоқ:</strong> Егер біреу консольден 0.0.0.0/0 портын қолмен ашып қойса, Checkov оны ешқашан анықтай алмайды.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 5. DRIFTCTL -->
+    <article class="satbayev-card p-6 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b">
+        <div>
+          <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-slate-100 text-slate-700">5-Аналог &bull; Snyk / Open Source</span>
+          <h3 class="text-xl font-black text-slate-900 mt-1">driftctl (Cloud Drift Detector)</h3>
+          <p class="text-xs text-slate-500">Сілтемесі: <a href="https://github.com/snyk/driftctl" target="_blank" class="text-blue-600 hover:underline">github.com/snyk/driftctl</a></p>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-800 font-bold border">Тек Ауытқу (Drift) Құралы</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-900">
+          <div class="bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300 flex items-center justify-between">
+            <span>driftctl_preview.png</span>
+            <span class="text-emerald-400">Нақты скриншот</span>
+          </div>
+          <img src="analogs/05_driftctl_preview.png" alt="driftctl preview" class="w-full h-auto img-zoom">
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <h4 class="font-bold text-xs text-emerald-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-plus text-emerald-600"></i> Артықшылықтары (+):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li>Terraform state файлы мен бұлтты салыстырып, кодтан тыс ресурстарды табады.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+            <h4 class="font-bold text-xs text-rose-800 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-minus text-rose-600"></i> Кемшіліктері (-):
+            </h4>
+            <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+              <li><strong>Қауіпсіздік пен комплаенсті тексермейді:</strong> Тек айырмашылықты көрсетеді, бірақ ол қауіпті ме, әлде қауіпсіз бе екенін бағаламайды.</li>
+              <li>Жобаны әзірлеу ресми түрде тоқтатылған (deprecated).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 6. БІЗДІҢ ЖҮЙЕ: CLOUDSEC AUDITOR (СӘТБАЕВ УНИВЕРСИТЕТІ) -->
+    <article class="satbayev-card p-6 sm:p-8 border-2 border-blue-500 bg-gradient-to-b from-blue-50/50 to-white">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-blue-200">
+        <div>
+          <span class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-blue-600 text-white shadow-sm">
+            Ғылыми жаңашылдық &bull; Дипломдық Жоба 2026
+          </span>
+          <h3 class="text-2xl font-black text-blue-900 mt-2">CloudSec Auditor (Satbayev University)</h3>
+          <p class="text-xs text-slate-600">AWS CSPM + Shift-Left Terraform + Configuration Drift интеграцияланған платформасы</p>
+        </div>
+        <span class="text-xs px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold border border-emerald-300 shadow-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-halved"></i> 100 / 100 Қорғалған
+        </span>
+      </div>
+
+      <!-- Біздің жүйенің нақты скриншоттары -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="border rounded-2xl overflow-hidden shadow-md bg-white">
+          <div class="bg-blue-900 px-3 py-1.5 text-[11px] font-mono text-cyan-300 flex items-center justify-between">
+            <span>01_cloudsec_auditor_dashboard.png</span>
+            <span class="text-white font-bold">100/100 ДАШБОРД</span>
+          </div>
+          <img src="analogs/06_cloudsec_auditor_clean_100.png" alt="CloudSec Auditor Clean" class="w-full h-auto img-zoom">
+        </div>
+
+        <div class="border rounded-2xl overflow-hidden shadow-md bg-white">
+          <div class="bg-blue-900 px-3 py-1.5 text-[11px] font-mono text-cyan-300 flex items-center justify-between">
+            <span>02_cloudsec_scan_laser.png</span>
+            <span class="text-cyan-300 font-bold">КИБЕР-ЛАЗЕР СКАНЕР</span>
+          </div>
+          <img src="analogs/06_cloudsec_auditor_scan_laser.png" alt="CloudSec Auditor Scan" class="w-full h-auto img-zoom">
+        </div>
+
+        <div class="border rounded-2xl overflow-hidden shadow-md bg-white">
+          <div class="bg-blue-900 px-3 py-1.5 text-[11px] font-mono text-emerald-300 flex items-center justify-between">
+            <span>03_cloudsec_splash_grade_a.png</span>
+            <span class="text-emerald-400 font-bold">GRADE A ЭКРАНДЫҚ АНИМАЦИЯ</span>
+          </div>
+          <img src="analogs/06_cloudsec_auditor_splash_grade_a.png" alt="CloudSec Grade A Splash" class="w-full h-auto img-zoom">
+        </div>
+
+        <div class="border rounded-2xl overflow-hidden shadow-md bg-white">
+          <div class="bg-blue-900 px-3 py-1.5 text-[11px] font-mono text-amber-300 flex items-center justify-between">
+            <span>04_cloudsec_vulnerable_findings.png</span>
+            <span class="text-amber-400 font-bold">ОСАЛДЫҚТАР МЕН 1-CLICK ТҮЗЕТУ</span>
+          </div>
+          <img src="analogs/06_cloudsec_auditor_vulnerable_findings.png" alt="CloudSec Findings Table" class="w-full h-auto img-zoom">
+        </div>
+      </div>
+
+      <!-- Біздің артықшылықтарымыздың жиынтығы -->
+      <div class="p-5 rounded-2xl bg-white border border-blue-200 shadow-sm">
+        <h4 class="font-extrabold text-sm text-blue-950 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-award text-amber-500"></i> Жобаның ғылыми жаңашылдығы және шешілген мәселелері (Research Gap):
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-700">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <strong class="text-blue-900 block mb-1">1. Біріктірілген архитектура</strong>
+            Бөлек-бөлек құралдарды (Prowler + Checkov + driftctl) қолданбай, барлығын бірыңғай жеңіл жүйеге шоғырландырдық.
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <strong class="text-blue-900 block mb-1">2. Кемімелі скоринг ($C=168$)</strong>
+            Бірдей ондаған қайталанған бакет үшін ұпай нөлге түсіп кетпейтін, қанығуы бар математикалық модель құрылды.
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <strong class="text-blue-900 block mb-1">3. ҚР ұлттық стандартына сәйкестік</strong>
+            Мемлекеттік тілдегі алғашқы толық интерфейс пен 1-шертумен түзетуге арналған дайын AWS CLI/Terraform шешімдері.
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- ФУТЕР -->
+  <footer class="max-w-6xl mx-auto mt-12 py-6 text-center text-xs text-slate-400 border-t border-slate-200">
+    <p>Сәтбаев Университеті &bull; Ақпараттық қауіпсіздік кафедрасы &bull; 2026 жыл</p>
+  </footer>
+
+</body>
+</html>

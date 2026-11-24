@@ -16,10 +16,32 @@ logger = logging.getLogger(__name__)
 def check_s3_001_public_access_block(session: boto3.Session) -> List[Finding]:
     """
     S3-001: S3 бакетінде жария қолжетімділікті бұғаттау (Public Access Block) бапталмағанын тексереді.
-    Стандарт: CIS AWS Foundations Benchmark 2.1.5
+    Стандарт: CIS AWS Foundations Benchmark 2.1.5 (v1.4) / 2.1.4 (v3.0) / AWS FSBP S3.1
     Қауіптілік: HIGH
     """
     findings: List[Finding] = []
+
+    # 1. Ең алдымен AWS аккаунты деңгейіндегі Public Access Block (Account-level PAB) күйін тексереміз.
+    # Егер ұйым s3control арқылы орталықтандырылған жаһандық қорғаныс қойған болса,
+    # барлық бакеттер қорғалған болып саналады және жалған дабылдар (False Positives) шықпайды.
+    try:
+        sts = session.client("sts")
+        account_id = sts.get_caller_identity().get("Account")
+        if account_id:
+            s3control = session.client("s3control")
+            acct_pab = s3control.get_public_access_block(AccountId=account_id)
+            acct_conf = acct_pab.get("PublicAccessBlockConfiguration", {})
+            if (
+                acct_conf.get("BlockPublicAcls") is True
+                and acct_conf.get("IgnorePublicAcls") is True
+                and acct_conf.get("BlockPublicPolicy") is True
+                and acct_conf.get("RestrictPublicBuckets") is True
+            ):
+                logger.info("AWS аккаунты деңгейінде (Account-level) S3 Public Access Block толық белсенді. Бакеттер қауіпсіз.")
+                return []
+    except Exception as exc:
+        logger.debug("Account-level S3 PAB тексеру ескертуі (бакеттік деңгейге көшу): %s", exc)
+
     s3 = session.client("s3")
 
     try:
@@ -78,7 +100,7 @@ def check_s3_001_public_access_block(session: boto3.Session) -> List[Finding]:
                             "S3 бакеті үшін 'Block all public access' баптауын толықтай қосыңыз "
                             "(BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets = True)."
                         ),
-                        standard="CIS AWS Foundations Benchmark 2.1.5",
+                        standard="CIS AWS Foundations Benchmark 2.1.4 (v3.0) / 2.1.5 (v1.4) / FSBP S3.1",
                         remediation_cli=(
                             f"aws s3api put-public-access-block --bucket {bucket_name} "
                             '--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"'
@@ -214,7 +236,7 @@ def check_s3_003_bucket_versioning(session: boto3.Session) -> List[Finding]:
                                 "Деректердің тұтастығын сақтау және кездейсоқ жойылудан қорғау үшін S3 бакетінде "
                                 "Versioning мүмкіндігін қосыңыз."
                             ),
-                            standard="CIS AWS Foundations Benchmark 2.1.3",
+                            standard="CIS AWS Foundations Benchmark 2.1.3 (Алғышарт) / FSBP S3.14",
                             remediation_cli=f"aws s3api put-bucket-versioning --bucket {bucket_name} --versioning-configuration Status=Enabled",
                             remediation_terraform=(
                                 f'resource "aws_s3_bucket_versioning" "ver_{bucket_name}" {{\n'

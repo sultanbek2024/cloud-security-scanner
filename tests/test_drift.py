@@ -204,3 +204,65 @@ def test_shadow_rds_drift_detected():
     assert updated[0].is_drift is True
     assert "Shadow Database" in updated[0].description
 
+
+def test_terraform_demo_three_clickops_drift_events():
+    """
+    6-жағдай: terraform_demo макетіндегі 3 қауіпсіз жазылған ресурс (SG, S3, RDS)
+    бұлтта қолмен өзгертілгенде (ClickOps) нақты 3 ClickOps Drift анықталуы тиіс.
+    """
+    from iac.scanner import get_declared_resources
+    import os
+
+    demo_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "terraform_demo")
+    iac_res = get_declared_resources(demo_dir)
+
+    live_findings = [
+        Finding(
+            rule_id="EC2-001",
+            title="SSH (22-порт) бүкіл интернетке ашық",
+            resource="sg-12345678 (vulnerable-ssh-sg) [us-east-1]",
+            severity=Severity.HIGH,
+            description="22-порт ашық.",
+            recommendation="Жабыңыз.",
+            standard="CIS AWS Foundations Benchmark 5.2",
+        ),
+        Finding(
+            rule_id="S3-001",
+            title="S3 бакетінде жария қолжетімділікті бұғаттау толық қосылмаған",
+            resource="arn:aws:s3:::vulnerable-public-bucket",
+            severity=Severity.HIGH,
+            description="PAB өшірілген.",
+            recommendation="Қосыңыз.",
+            standard="CIS AWS Foundations Benchmark 2.1.4",
+        ),
+        Finding(
+            rule_id="RDS-001",
+            title="Жалпыға ашық RDS инстансы",
+            resource="arn:aws:rds:us-east-1:123456789012:db:vulnerable-public-db",
+            severity=Severity.CRITICAL,
+            description="PubliclyAccessible=True.",
+            recommendation="Жабыңыз.",
+            standard="CIS AWS Foundations Benchmark 2.3.2",
+        ),
+        Finding(
+            rule_id="EC2-004",
+            title="Security Group барлық трафикке ашық",
+            resource="sg-99999999 (vulnerable-allports-sg) [us-east-1]",
+            severity=Severity.HIGH,
+            description="Барлық порттар ашық.",
+            recommendation="Жабыңыз.",
+            standard="CIS AWS Foundations Benchmark 5.4",
+        ),
+    ]
+
+    correlated = correlate_and_detect_drift(live_findings, iac_res)
+
+    # 3 ClickOps drift + 1 Shadow Resource
+    clickops_findings = [f for f in correlated if "ClickOps" in f.description]
+    shadow_findings = [f for f in correlated if "Shadow" in f.description]
+
+    assert len(clickops_findings) == 3
+    assert len(shadow_findings) == 1
+    assert all(f.is_drift for f in correlated)
+
+

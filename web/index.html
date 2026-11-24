@@ -335,6 +335,8 @@
     }
 
     .ui-card {
+      --mouse-x: -999px;
+      --mouse-y: -999px;
       background-color: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--card-radius);
@@ -838,9 +840,9 @@
         <a href="#boxTable" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition">
           <i class="fa-solid fa-triangle-exclamation w-4 text-center text-amber-400"></i> <span>Drift мониторинг</span>
         </a>
-        <a href="/api/v1/report/html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition">
+        <button onclick="toggleReportView(true)" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition cursor-pointer">
           <i class="fa-solid fa-file-shield w-4 text-center text-emerald-400"></i> <span>HTML Есеп</span>
-        </a>
+        </button>
         <a href="/docs" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/60 transition">
           <i class="fa-solid fa-code w-4 text-center text-indigo-400"></i> <span>Swagger API</span>
         </a>
@@ -860,16 +862,7 @@
       </div>
     </div>
 
-    <!-- Төменгі дизайн ауыстырғыш -->
-    <div class="pt-4 border-t border-blue-900/40 text-xs">
-      <div class="text-[11px] text-slate-400 mb-2 font-semibold">Лейаутты таңдау:</div>
-      <div class="grid grid-cols-2 gap-1.5">
-        <button onclick="setTheme('portal')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-center">Портал</button>
-        <button onclick="setTheme('glass')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-center">Glass</button>
-        <button onclick="setTheme('bento')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-center">Bento</button>
-        <button onclick="setTheme('enterprise')" class="p-1.5 rounded-lg bg-cyan-500 text-slate-950 text-[11px] font-bold text-center">Enterprise</button>
-      </div>
-    </div>
+
   </aside>
 
   <!-- =============================================================
@@ -917,34 +910,14 @@
           </div>
         </div>
 
-        <!-- Оң жақ: Дизайн ауыстырғыш & Түймелер -->
+        <!-- Оң жақ: Түймелер -->
         <div class="flex items-center flex-wrap gap-2.5">
-          
-          <div id="themeSwitcherBox" class="flex items-center p-1 rounded-xl bg-black/15 border border-white/20 text-xs backdrop-blur transition-all">
-            <button onclick="setTheme('portal')" id="btn-theme-portal" 
-                    class="theme-btn px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-white text-blue-900 shadow-sm">
-              <i class="fa-solid fa-building-columns text-[11px]"></i> <span>Портал</span>
-            </button>
-            <button onclick="setTheme('glass')" id="btn-theme-glass" 
-                    class="theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 opacity-80 hover:opacity-100">
-              <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i> <span>Glass</span>
-            </button>
-            <button onclick="setTheme('bento')" id="btn-theme-bento" 
-                    class="theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 opacity-80 hover:opacity-100">
-              <i class="fa-solid fa-table-cells-large text-[11px]"></i> <span>Bento</span>
-            </button>
-            <button onclick="setTheme('enterprise')" id="btn-theme-enterprise" 
-                    class="theme-btn px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1.5 opacity-80 hover:opacity-100">
-              <i class="fa-solid fa-shield-halved text-[11px]"></i> <span>Enterprise</span>
-            </button>
-          </div>
-
           <a href="/docs" target="_blank" class="text-xs px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 border border-white/25 transition font-semibold flex items-center gap-1.5">
             <i class="fa-solid fa-code"></i> API
           </a>
-          <a href="/api/v1/report/html" target="_blank" class="text-xs px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-file-lines"></i> HTML Есеп
-          </a>
+          <button onclick="toggleReportView(true)" id="btnOpenReport" class="text-xs px-3.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+            <i class="fa-solid fa-file-lines"></i> <span>HTML Есеп</span>
+          </button>
         </div>
 
       </div>
@@ -1245,6 +1218,43 @@ resource "aws_s3_bucket" "open_bucket" {
 
       </div>
 
+      <!-- =============================================================
+           2. БІРЫҢҒАЙ САЙТ ІШІНДЕГІ ИНТЕРАКТИВТІ HTML ЕСЕП БӨЛІМІ
+           ============================================================= -->
+      <div id="reportViewSection" class="hidden space-y-4">
+        <!-- ЖОҒАРҒЫ БАСҚАРУ ПАНЕЛІ МЕН АРТҚА БАТЫРМАСЫ -->
+        <div class="ui-card p-3.5 flex flex-wrap items-center justify-between gap-3 bg-white shadow-sm border border-slate-200">
+          <div class="flex items-center gap-3">
+            <button onclick="toggleReportView(false)" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition cursor-pointer">
+              <i class="fa-solid fa-arrow-left"></i> <span>Артқа</span>
+            </button>
+            <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+            <div>
+              <div class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-file-shield text-blue-600"></i>
+                <span>Интерактивті қауіпсіздік аудит есебі (HTML Report)</span>
+              </div>
+              <p class="text-[11px] text-slate-500 hidden sm:block">CIS AWS Foundations Benchmark және Shift-Left талдауының толық нәтижелері</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <!-- PDF ЕСЕБІН ҚҰРЫЛҒЫҒА ТІКЕЛЕЙ ЖҮКТЕУ БАТЫРМАСЫ -->
+            <a href="/api/v1/report/pdf" download="satbayev_cloudsec_audit_report.pdf" id="btnDownloadPdf" onclick="downloadPdfReport(event)" title="PDF есебін құрылғыға тікелей файл ретінде жүктеп алу" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition cursor-pointer text-decoration-none">
+              <i class="fa-solid fa-file-pdf text-sm"></i> <span>PDF есебін жүктеу / Скачать PDF</span>
+            </a>
+            <!-- ДАШБОРДҚА ҚАЙТУ БАТЫРМАСЫ -->
+            <button onclick="toggleReportView(false)" title="Дашбордқа қайту" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition cursor-pointer">
+              <i class="fa-solid fa-arrow-left"></i> <span>Дашбордқа қайту</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ОҚШАУЛАНҒАН ЕСЕП IFRAME КӨРІНІСІ (LIGHT THEME) -->
+        <div class="ui-card p-1.5 overflow-hidden rounded-2xl shadow-sm border border-slate-200 bg-white">
+          <iframe id="reportIframe" src="/api/v1/report/html" class="w-full h-[85vh] rounded-xl border-0 bg-slate-50"></iframe>
+        </div>
+      </div>
+
     </main>
 
     <!-- ТАЗА РЕСМИ FOOTER -->
@@ -1323,6 +1333,61 @@ resource "aws_s3_bucket" "open_bucket" {
         });
       });
     }
+
+    // 1.1 БІРЫҢҒАЙ САЙТ ІШІНДЕ HTML ЕСЕПТІ АШУ / ЖАБУ ЖӘНЕ АРТҚА ҚАЙТУ
+    function toggleReportView(showReport) {
+      const grid = document.getElementById('layoutGrid');
+      const repSection = document.getElementById('reportViewSection');
+      const iframe = document.getElementById('reportIframe');
+
+      const isCurrentlyReport = repSection && !repSection.classList.contains('hidden');
+      const shouldShow = (typeof showReport === 'boolean') ? showReport : !isCurrentlyReport;
+
+      if (shouldShow) {
+        if (grid) grid.classList.add('hidden');
+        if (repSection) repSection.classList.remove('hidden');
+        if (iframe) {
+          iframe.src = '/api/v1/report/html?t=' + Date.now();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        if (repSection) repSection.classList.add('hidden');
+        if (grid) grid.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function refreshReportIframe() {
+      const iframe = document.getElementById('reportIframe');
+      if (iframe) {
+        iframe.src = '/api/v1/report/html?t=' + Date.now();
+      }
+    }
+
+    // 1.2 PDF ЕСЕБІН ҚҰРЫЛҒЫҒА ТІКЕЛЕЙ ЖҮКТЕП АЛУ (DIRECT DOWNLOAD)
+    function downloadPdfReport(e) {
+      const btn = document.getElementById('btnDownloadPdf');
+      if (btn) {
+        const originalHtml = '<i class="fa-solid fa-file-pdf text-sm"></i> <span>PDF есебін жүктеу / Скачать PDF</span>';
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-sm"></i> <span>PDF жүктелуде...</span>';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i> <span>Жүктелді! / Скачано!</span>';
+          setTimeout(() => {
+            btn.innerHTML = originalHtml;
+          }, 2000);
+        }, 1200);
+      }
+      // Егер сілтеме басылмаса немесе басқа жерден шақырылса:
+      if (!e) {
+        const link = document.createElement('a');
+        link.href = '/api/v1/report/pdf?t=' + Date.now();
+        link.download = 'satbayev_cloudsec_audit_report.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+    const printReportIframe = downloadPdfReport;
 
     // Сандарды тегіс айналдыру (Smooth Rolling Counter with Bounce)
     function animateValue(id, start, end, duration = 800) {
@@ -1541,11 +1606,16 @@ resource "aws_s3_bucket" "open_bucket" {
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('satbayev_active_theme');
-      if (saved && THEMES.includes(saved)) {
-        setTheme(saved);
-      }
+      setTheme('portal');
       initCardSpotlights();
+      const urlParams = new URLSearchParams(window.location.search);
+      const preset = urlParams.get('preset');
+      if (preset === 'vulnerable' || preset === 'clean') {
+        setTimeout(() => loadDemoPreset(preset), 150);
+      }
+      if (urlParams.get('filter')) {
+        setTimeout(() => filterTable(urlParams.get('filter')), 1200);
+      }
     });
 
     // 2. ДЕМО ПРЕЗЕТТЕРІ

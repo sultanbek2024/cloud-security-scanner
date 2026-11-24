@@ -55,7 +55,7 @@ def check_rds_001_public_instance(session: boto3.Session) -> List[Finding]:
                                     "және оны тек жеке ішкі желіге (Private Subnet) орналастырып, тек рұқсат етілген "
                                     "қолданбалы серверлерден ғана қосылуға рұқсат беріңіз."
                                 ),
-                                standard="CIS AWS Foundations Benchmark 2.3.1",
+                                standard="CIS AWS Foundations Benchmark 2.3.2 (v3.0) / FSBP RDS.2",
                             )
                         )
         except ClientError as exc:

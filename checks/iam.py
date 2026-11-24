@@ -69,7 +69,7 @@ def check_iam_001_console_mfa(session: boto3.Session) -> List[Finding]:
                                     f"'{user_name}' пайдаланушысы үшін міндетті түрде виртуалды (Google Authenticator және т.б.) "
                                     f"немесе аппараттық FIDO/U2F қауіпсіздік кілтін (MFA) байланыстырыңыз."
                                 ),
-                                standard="CIS AWS Foundations Benchmark 1.10",
+                                standard="CIS AWS Foundations Benchmark 1.5 / FSBP IAM.5",
                             )
                         )
                 except ClientError as exc:
@@ -111,7 +111,7 @@ def check_iam_002_root_mfa(session: boto3.Session) -> List[Finding]:
                         "Root пайдаланушысы үшін дереу аппараттық (FIDO2/U2F) немесе виртуалды MFA құрылғысын "
                         "қосыңыз және күнделікті жұмыс үшін тек жеке IAM рөлдерін пайдаланыңыз."
                     ),
-                    standard="CIS AWS Foundations Benchmark 1.5",
+                    standard="CIS AWS Foundations Benchmark 1.6 / FSBP IAM.4",
                 )
             )
     except ClientError as exc:
@@ -172,7 +172,7 @@ def check_iam_003_old_access_keys(session: boto3.Session) -> List[Finding]:
                                                 "Қолжетімділік кілттерін кем дегенде 90 күн сайын тұрақты түрде "
                                                 "жаңартып (ротациялап), ескірген немесе қажетсіз кілттерді өшіріңіз."
                                             ),
-                                            standard="CIS AWS Foundations Benchmark 1.14",
+                                            standard="CIS AWS Foundations Benchmark 1.13 (v3.0) / 1.14 (v1.4) / FSBP IAM.3",
                                         )
                                     )
                 except ClientError as exc:

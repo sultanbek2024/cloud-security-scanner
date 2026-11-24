@@ -38,7 +38,14 @@ def serve_dashboard():
     """Интерактивті веб-интерфейсті қайтарады."""
     web_index = os.path.join(os.path.dirname(os.path.dirname(__file__)), "web", "index.html")
     if os.path.exists(web_index):
-        return FileResponse(web_index)
+        return FileResponse(
+            web_index,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+            },
+        )
     return {"message": "Web UI табылмады. /docs арқылы API қолданыңыз."}
 
 

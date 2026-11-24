@@ -12,7 +12,7 @@ AWS бұлттық инфрақұрылымындағы конфигурация
 - **AWS SDK**: `boto3` (бұлттық ресурстармен байланыс)
 - **IaC Parser**: `python-hcl2` (Terraform .tf файлдарын статикалық талдау)
 - **Шаблонизатор**: `jinja2` (автономды интерактивті HTML-есептер құрастыру)
-- **Тестілеу**: `pytest`, `httpx` (33 кешенді тест)
+- **Тестілеу**: `pytest`, `httpx` (49 кешенді тест)
 - **Модельдеу / Мок**: `moto` (нақты AWS шығындарынсыз оқшауланған тестілеу)
 - **Контейнеризация**: `Docker`, `docker-compose`
 
@@ -58,7 +58,7 @@ Diplom/
 │   └── template.html       # Интерактивті сүзгісі бар HTML үлгісі (<html lang="kk">)
 ├── scripts/                # Қосымша утилиталар
 │   └── setup_vulnerable_env.py # Эмуляторды осал ресурстармен толтыру/тазалау
-├── tests/                  # Автоматтандырылған тесттер (33 тест)
+├── tests/                  # Автоматтандырылған тесттер (49 тест)
 │   ├── test_api.py         # FastAPI эндпоинттерін тестілеу
 │   ├── test_drift.py       # Drift Detection қозғалтқышын тестілеу
 │   ├── test_iac.py         # Terraform парсерін және ережелерін тестілеу
@@ -98,7 +98,7 @@ pip install -r requirements.txt
 
 ## 🧪 Тесттерді іске қосу
 
-Жобадағы барлық модульдер (AWS ережелері, IaC сканері, Drift қозғалтқышы және REST API) `pytest`, `httpx` және `moto` кітапханалары арқылы толық тестіленген (барлығы 33 кешенді тест):
+Жобадағы барлық модульдер (AWS ережелері, IaC сканері, Drift қозғалтқышы және REST API) `pytest`, `httpx` және `moto` кітапханалары арқылы толық тестіленген (барлығы 49 кешенді тест):
 
 ```bash
 cd Diplom
@@ -146,10 +146,23 @@ python scanner.py --endpoint-url http://localhost:4566 --all-regions --output re
 python scripts/setup_vulnerable_env.py --endpoint-url http://localhost:4566 --cleanup
 ```
 
-### 2. Нақты AWS инфрақұрылымында іске қосу (SecurityAudit саясатымен)
+### 5. Нақты AWS инфрақұрылымында іске қосу (Ең аз рұқсат қағидасы - Least Privilege)
+Сканер AWS API метадеректерін тек **read-only** режимінде оқиды. AWS-те сканерлеу үшін арнайы басқарылатын `SecurityAudit` саясатын немесе жобадағы ең төменгі рұқсаттар берілген жеке саясатты қолдануға болады:
+- Толық минималды JSON саясаты: [`docs/minimal_iam_policy.json`](docs/minimal_iam_policy.json)
+
 ```bash
 aws configure --profile audit-profile
 python scanner.py --profile audit-profile --region us-east-1 --all-regions --output report.html
+```
+
+### 6. Автоматты түзету скрипті (Remediation Engine)
+Стендті қауіпсіздендіру немесе өндірістік ортаға дайындық:
+```bash
+# Өзгеріс енгізбей, жоспарланған әрекеттерді тексеру (Dry-Run):
+python scripts/remediate_env.py --dry-run
+
+# Сенімді ішкі желіні (VPN/корпоративтік CIDR) көрсете отырып түзету:
+python scripts/remediate_env.py --trusted-cidr 10.0.0.0/8 --yes
 ```
 
 ---
@@ -158,21 +171,21 @@ python scanner.py --profile audit-profile --region us-east-1 --all-regions --out
 
 | Код | Деңгей | Ресурс | Сипаттамасы | Стандарт |
 |---|---|---|---|---|
-| **EC2-001** | HIGH | EC2 | SSH (22-порт) бүкіл интернетке (0.0.0.0/0) ашық | CIS AWS Benchmark 5.2 |
-| **EC2-002** | MEDIUM | EBS | Шифрланбаған EBS томы | CIS AWS Benchmark 2.2.1 |
-| **EC2-003** | HIGH | EC2 | RDP (3389-порт) бүкіл интернетке (0.0.0.0/0) ашық | CIS AWS Benchmark 5.3 |
-| **EC2-004** | HIGH | EC2 | Security Group барлық трафикті (-1 немесе 0-65535) ашық қалдырған | CIS AWS Benchmark 5.1 |
-| **S3-001** | HIGH | S3 | S3 бакетінде Public Access Block өшірілген | CIS AWS Benchmark 2.1.5 |
-| **S3-002** | MEDIUM | S3 | S3 бакетінде әдепкі серверлік шифрлау (SSE) жоқ | CIS AWS Benchmark 2.1.1 |
-| **S3-003** | LOW | S3 | S3 бакетінде нұсқалылық (Versioning) қосылмаған | CIS AWS Benchmark 2.1.3 |
-| **IAM-001** | MEDIUM | IAM | Консольдік құпиясөзі бар пайдаланушыда MFA жоқ | CIS AWS Benchmark 1.10 |
-| **IAM-002** | CRITICAL | IAM | Root аккаунтында MFA құрылғысы қосылмаған | CIS AWS Benchmark 1.5 |
-| **IAM-003** | MEDIUM | IAM | 90 күннен ескірген белсенді IAM Access Key | CIS AWS Benchmark 1.14 |
-| **IAM-004** | CRITICAL | IAM | Саясатта толық әкімшілік рұқсат (Action '*' және Resource '*') | CIS AWS Benchmark 1.16 |
-| **IAM-005** | LOW | IAM | Құпиясөз саясаты (Password Policy) әлсіз немесе жоқ | CIS AWS Benchmark 1.8 |
-| **RDS-001** | CRITICAL | RDS | Деректер қоры интернетке жария қолжетімді (PubliclyAccessible) | CIS AWS Benchmark 2.3.1 |
-| **CT-001** | HIGH | CloudTrail | Есептік жазбада белсенді CloudTrail трейлі жоқ | CIS AWS Benchmark 3.1 |
-| **CT-002** | LOW | CloudTrail | CloudTrail лог-файлдарының тұтастығын тексеру өшірулі | CIS AWS Benchmark 3.2 |
+| **EC2-001** | HIGH | EC2 | SSH (22-порт) бүкіл интернетке (0.0.0.0/0) ашық | CIS 5.2 / FSBP EC2.13 |
+| **EC2-002** | MEDIUM | EBS | Шифрланбаған EBS томы | CIS 2.2.1 / FSBP EC2.3 |
+| **EC2-003** | HIGH | EC2 | RDP (3389-порт) бүкіл интернетке (0.0.0.0/0) ашық | CIS 5.3 / FSBP EC2.14 |
+| **EC2-004** | HIGH | EC2 | Security Group барлық трафикті (-1 немесе 0-65535) ашық қалдырған | CIS 5.4 / FSBP EC2.19 |
+| **S3-001** | HIGH | S3 | S3 бакетінде Public Access Block өшірілген | CIS 2.1.4 (v3) / 2.1.5 (v1.4) |
+| **S3-002** | MEDIUM | S3 | S3 бакетінде әдепкі серверлік шифрлау (SSE) жоқ | CIS 2.1.1 / FSBP S3.4 |
+| **S3-003** | LOW | S3 | S3 бакетінде нұсқалылық (Versioning) қосылмаған | CIS 2.1.3 (Алғышарт) / FSBP S3.14 |
+| **IAM-001** | MEDIUM | IAM | Консольдік құпиясөзі бар пайдаланушыда MFA жоқ | CIS 1.5 / FSBP IAM.5 |
+| **IAM-002** | CRITICAL | IAM | Root аккаунтында MFA құрылғысы қосылмаған | CIS 1.6 / FSBP IAM.4 |
+| **IAM-003** | MEDIUM | IAM | 90 күннен ескірген белсенді IAM Access Key | CIS 1.13 (v3) / 1.14 (v1.4) |
+| **IAM-004** | CRITICAL | IAM | Саясатта толық әкімшілік рұқсат (Action '*' және Resource '*') | CIS 1.16 / FSBP IAM.1 |
+| **IAM-005** | LOW | IAM | Құпиясөз саясаты (Password Policy) әлсіз немесе жоқ | CIS 1.8 / FSBP IAM.7 |
+| **RDS-001** | CRITICAL | RDS | Деректер қоры интернетке жария қолжетімді (PubliclyAccessible) | CIS 2.3.2 (v3) / FSBP RDS.2 |
+| **CT-001** | HIGH | CloudTrail | Есептік жазбада белсенді CloudTrail трейлі жоқ | CIS 3.1 / FSBP CloudTrail.1 |
+| **CT-002** | LOW | CloudTrail | CloudTrail лог-файлдарының тұтастығын тексеру өшірулі | CIS 3.2 / FSBP CloudTrail.2 |
 
 ---
 

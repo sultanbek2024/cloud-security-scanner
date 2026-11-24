@@ -194,7 +194,7 @@ def check_ec2_003_open_rdp(session: boto3.Session) -> List[Finding]:
                                         "3389 (RDP) портына қолжетімділікті нақты сенімді корпоративтік IP мекенжайлармен шектеңіз "
                                         "немесе AWS Systems Manager Fleet Manager пайдаланыңыз."
                                     ),
-                                    standard="CIS AWS Foundations Benchmark 5.3",
+                                    standard="CIS AWS Foundations Benchmark 5.3 (v3.0) / FSBP EC2.14",
                                     remediation_cli=f"aws ec2 revoke-security-group-ingress --group-id {sg_id} --protocol tcp --port 3389 --cidr 0.0.0.0/0",
                                     remediation_terraform=(
                                         f'# Security Group ({sg_name}) 3389 (RDP) портын жабыңыз немесе шектеңіз:\n'
@@ -266,7 +266,7 @@ def check_ec2_004_all_ports_open(session: boto3.Session) -> List[Finding]:
                                         "Барлық трафикке рұқсат беретін (0.0.0.0/0 All Traffic) ережені дереу өшіріп, "
                                         "тек нақты қажетті порттар мен IP мекенжайларды ғана рұқсат етіңіз."
                                     ),
-                                    standard="CIS AWS Foundations Benchmark 5.1",
+                                    standard="CIS AWS Foundations Benchmark 5.4 / FSBP EC2.19",
                                     remediation_cli=f"aws ec2 revoke-security-group-ingress --group-id {sg_id} --protocol -1 --cidr 0.0.0.0/0",
                                     remediation_terraform=(
                                         f'# Security Group ({sg_name}) ішіндегі protocol = "-1" немесе 0.0.0.0/0 ережесін өшіріңіз'

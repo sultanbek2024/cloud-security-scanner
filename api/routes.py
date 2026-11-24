@@ -8,19 +8,23 @@ import tempfile
 from typing import List, Dict, Any, Optional
 import boto3
 from fastapi import APIRouter, HTTPException, Query, Response
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 
-from core.engine import ScanEngine
+from core.engine import ScanEngine, auto_discover_checks
 from core.models import Finding, Severity
 from core.scoring import calculate_score, group_findings_by_severity
 from core.drift import correlate_and_detect_drift
 from core.registry import get_registered_checks
 from iac.scanner import scan_terraform, get_declared_resources
 from report.html_report import generate_html_report
+from report.pdf_report import generate_pdf_report
 from api.schemas import ScanRequest, ScanResponse, FindingSchema, RuleInfoSchema
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", tags=["Cloud Security Scanner"])
+
+# Ережелерді бірден жүктеу
+auto_discover_checks()
 
 # Соңғы сканерлеу нәтижесін жадта кэштеу
 LATEST_RESULTS: Dict[str, Any] = {}
@@ -153,7 +157,10 @@ def run_scan(req: ScanRequest) -> ScanResponse:
         all_findings = correlate_and_detect_drift(all_findings, iac_resources)
 
     # Бағалау және топтастыру
-    score, grade = calculate_score(all_findings, max(total_checks, 1))
+    # Бұлттық табыстар мен IaC табыстарының арасында бағалық шатасуды болдырмау
+    cloud_findings = [f for f in all_findings if not f.rule_id.startswith("IAC-")]
+    score_findings = cloud_findings if cloud_findings else all_findings
+    score, grade = calculate_score(score_findings, total_checks=15)
     grouped = group_findings_by_severity(all_findings)
     sev_counts = {
         "critical": len(grouped.get(Severity.CRITICAL, [])),
@@ -180,8 +187,9 @@ def run_scan(req: ScanRequest) -> ScanResponse:
         findings=[FindingSchema(**d) for d in findings_dicts],
     )
 
-    # HTML есепті генерациялау және кэштеу
+    # HTML және PDF есептерді генерациялау және кэштеу
     report_path = "report.html"
+    pdf_path = "report.pdf"
     try:
         generate_html_report(
             findings=all_findings,
@@ -191,6 +199,10 @@ def run_scan(req: ScanRequest) -> ScanResponse:
             provider=req.provider,
             region=req.region,
         )
+        try:
+            generate_pdf_report(html_path=report_path, pdf_path=pdf_path)
+        except Exception as p_err:
+            logger.warning("PDF алдын-ала генерациялау ескертуі: %s", p_err)
     except Exception as exc:
         logger.error("HTML есепті жасау кезінде қате: %s", exc)
 
@@ -215,3 +227,37 @@ def get_html_report() -> HTMLResponse:
     with open(report_path, "r", encoding="utf-8") as f:
         content = f.read()
     return HTMLResponse(content=content)
+
+
+@router.get("/report/pdf")
+def download_pdf_report() -> FileResponse:
+    """
+    Генерацияланған PDF аудит есебін құрылғыға тікелей файл түрінде жүктеп алу (Direct Download).
+    """
+    html_path = "report.html"
+    pdf_path = "report.pdf"
+
+    if not os.path.exists(html_path):
+        raise HTTPException(status_code=404, detail="Есеп дайын емес. Алдымен сканерлеуді іске қосыңыз.")
+
+    # PDF файлы жоқ немесе жаңа есеппен сәйкес келмесе, жаңартамыз
+    try:
+        need_gen = (not os.path.exists(pdf_path)) or (os.path.getmtime(html_path) > os.path.getmtime(pdf_path))
+        if need_gen:
+            generate_pdf_report(html_path=html_path, pdf_path=pdf_path)
+    except Exception as exc:
+        logger.error("PDF генерациялау кезінде қате: %s", exc)
+        if not os.path.exists(pdf_path):
+            raise HTTPException(status_code=500, detail=f"PDF есебін генерациялау қатесі: {exc}")
+
+    return FileResponse(
+        path=pdf_path,
+        media_type="application/pdf",
+        filename="satbayev_cloudsec_audit_report.pdf",
+        headers={
+            "Content-Disposition": 'attachment; filename="satbayev_cloudsec_audit_report.pdf"',
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
+    )
