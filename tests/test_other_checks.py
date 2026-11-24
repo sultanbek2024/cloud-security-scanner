@@ -264,3 +264,93 @@ def test_rds_private_instance_no_findings(aws_session):
     findings = check_rds_001_public_instance(aws_session)
     assert len(findings) == 0
 
+
+@mock_aws
+def test_s3_account_level_pab_prevents_false_positive(aws_session):
+    """
+    AWS аккаунты деңгейінде (Account-level PAB) толық қорғаныс қосылғанда,
+    жеке бакеттерде бапталмаса да, False Positive болдырмау үшін S3-001 қауіп шығармауы тиіс.
+    """
+    from unittest.mock import MagicMock
+    s3 = aws_session.client("s3")
+    s3.create_bucket(Bucket="company-data-no-bucket-pab")
+
+    real_client_fn = aws_session.client
+    mock_ctrl = MagicMock()
+    mock_ctrl.get_public_access_block.return_value = {
+        "PublicAccessBlockConfiguration": {
+            "BlockPublicAcls": True,
+            "IgnorePublicAcls": True,
+            "BlockPublicPolicy": True,
+            "RestrictPublicBuckets": True,
+        }
+    }
+
+    def custom_client(service_name, *args, **kwargs):
+        if service_name == "s3control":
+            return mock_ctrl
+        return real_client_fn(service_name, *args, **kwargs)
+
+    with patch.object(aws_session, "client", side_effect=custom_client):
+        findings = check_s3_001_public_access_block(aws_session)
+        assert len(findings) == 0
+
+
+@mock_aws
+def test_iam_clean_user_with_mfa_no_findings(aws_session):
+    """Консоль құпиясөзі және виртуалды MFA құрылғысы бар пайдаланушыда IAM-001 қаупі шықпауы тиіс."""
+    iam = aws_session.client("iam")
+    u_name = "clean-mfa-user"
+    iam.create_user(UserName=u_name)
+    iam.create_login_profile(UserName=u_name, Password="CleanPassword123!")
+    vmfa = iam.create_virtual_mfa_device(VirtualMFADeviceName="clean-user-mfa")
+    iam.enable_mfa_device(
+        UserName=u_name,
+        SerialNumber=vmfa["VirtualMFADevice"]["SerialNumber"],
+        AuthenticationCode1="123456",
+        AuthenticationCode2="654321",
+    )
+    findings = check_iam_001_console_mfa(aws_session)
+    assert len(findings) == 0
+
+
+@mock_aws
+def test_iam_strong_password_policy_no_findings(aws_session):
+    """CIS AWS талаптарына толық сай келетін қатаң құпиясөз саясатында IAM-005 қаупі шықпауы тиіс."""
+    iam = aws_session.client("iam")
+    iam.update_account_password_policy(
+        MinimumPasswordLength=14,
+        RequireSymbols=True,
+        RequireNumbers=True,
+        RequireUppercaseCharacters=True,
+        RequireLowercaseCharacters=True,
+        AllowUsersToChangePassword=True,
+        MaxPasswordAge=90,
+        PasswordReusePrevention=5,
+    )
+    findings = check_iam_005_password_policy(aws_session)
+    assert len(findings) == 0
+
+
+@mock_aws
+def test_ct_clean_trail_with_validation_no_findings(aws_session):
+    """Белсенді және лог валидациясы қосылған CloudTrail трейлінде CT-001 және CT-002 қаупі шықпауы тиіс."""
+    s3 = aws_session.client("s3")
+    ct = aws_session.client("cloudtrail", region_name="us-east-1")
+    s3.create_bucket(Bucket="secure-ct-logs-bucket")
+
+    t_name = "production-secure-trail"
+    ct.create_trail(
+        Name=t_name,
+        S3BucketName="secure-ct-logs-bucket",
+        IsMultiRegionTrail=True,
+        EnableLogFileValidation=True,
+    )
+    ct.start_logging(Name=t_name)
+
+    f1 = check_ct_001_active_cloudtrail(aws_session)
+    f2 = check_ct_002_log_validation(aws_session)
+    assert len(f1) == 0
+    assert len(f2) == 0
+
+

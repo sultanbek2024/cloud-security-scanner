@@ -1,0 +1,31 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CloudSecAuditorMinimalReadOnlyPolicy",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeRegions",
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetBucketEncryption",
+        "s3:GetBucketVersioning",
+        "s3control:GetPublicAccessBlock",
+        "iam:ListUsers",
+        "iam:GetLoginProfile",
+        "iam:ListMFADevices",
+        "iam:GetAccountSummary",
+        "iam:ListAccessKeys",
+        "iam:ListPolicies",
+        "iam:GetAccountPasswordPolicy",
+        "rds:DescribeDBInstances",
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetTrailStatus",
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
